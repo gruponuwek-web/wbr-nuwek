@@ -1,0 +1,90 @@
+/* Configuración CSS */
+.config-container { background: white; border-radius: 12px; padding: 2rem; }
+.config-container > h1 { font-family: 'Syne', sans-serif; font-size: 2rem; margin-bottom: 2rem; }
+
+/* Progress Steps */
+.progress-steps { display: flex; justify-content: space-between; margin-bottom: 3rem; position: relative; }
+.progress-steps::before { content: ''; position: absolute; top: 24px; left: 0; right: 0; height: 2px; background: #E5E7EB; z-index: 0; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 1; position: relative; cursor: pointer; }
+.step-circle { width: 50px; height: 50px; border-radius: 50%; background: #F8F9FA; border: 3px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: #6B7280; transition: all 0.3s ease; }
+.step.active .step-circle { background: #4472C4; color: white; border-color: #4472C4; box-shadow: 0 0 12px rgba(68, 114, 196, 0.3); }
+.step-label { font-size: 0.85rem; font-weight: 600; color: #6B7280; }
+.step.active .step-label { color: #4472C4; font-weight: 700; }
+
+/* Config Steps */
+.config-step { display: none; }
+.config-step.active { display: block; }
+.config-step > h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+.config-section { background: #F8F9FA; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #4472C4; }
+.config-section > h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 1.5rem; }
+
+.section-hint { color: #6B7280; font-size: 0.95rem; margin-bottom: 1.5rem; font-style: italic; }
+
+/* Forms */
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: #1F2937; font-size: 0.95rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem 1rem; border: 1px solid #E5E7EB; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 1rem; transition: all 0.3s ease; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #4472C4; box-shadow: 0 0 8px rgba(68, 114, 196, 0.2); }
+.form-group input:disabled { background-color: #F8F9FA; cursor: not-allowed; color: #6B7280; }
+
+.checkbox-group, .checkbox-list { display: flex; flex-direction: column; gap: 0.8rem; }
+.checkbox-group label, .checkbox-list label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500; }
+
+.button-group { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.step-nav { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #E5E7EB; justify-content: space-between; }
+
+/* Buttons */
+.btn { padding: 0.8rem 1.5rem; border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.btn-primary { background: #4472C4; color: white; }
+.btn-primary:hover { background: #2E5090; }
+.btn-success { background: #27AE60; color: white; }
+.btn-success:hover { background: #52C77F; }
+.btn-secondary { background: #F8F9FA; color: #4472C4; border: 2px solid #4472C4; }
+.btn-secondary:hover { background: #4472C4; color: white; }
+.btn-danger { background: #E74C3C; color: white; }
+.btn-danger:hover { background: #C0392B; }
+.btn-next, .btn-prev { background: #4472C4; color: white; }
+.btn-next:hover, .btn-prev:hover { background: #2E5090; }
+
+/* Contactos List */
+.contactos-list { margin-bottom: 1.5rem; }
+.contacto-item { background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1.2rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-start; }
+.contacto-info h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 0.4rem; }
+.contacto-info p { color: #6B7280; font-size: 0.9rem; margin: 0.2rem 0; }
+
+/* Usuarios List */
+.usuarios-list { margin-bottom: 2rem; }
+.usuarios-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+.usuarios-table thead { background: #4472C4; color: white; }
+.usuarios-table th { padding: 1rem; text-align: left; font-weight: 600; border: none; }
+.usuarios-table td { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
+.usuarios-table tbody tr:hover { background: #F8F9FA; }
+
+/* Módulos List */
+.modulos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+.modulo-item { background: #F8F9FA; border: 2px solid #E5E7EB; border-radius: 8px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.3s ease; }
+.modulo-item:hover { border-color: #4472C4; box-shadow: 0 4px 12px rgba(68, 114, 196, 0.2); }
+.modulo-item input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; }
+.modulo-info h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 0.2rem; }
+.modulo-info p { color: #6B7280; font-size: 0.85rem; }
+
+/* WBR List */
+.wbr-list { margin-bottom: 2rem; }
+.wbr-item { background: #F8F9FA; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #4472C4; }
+.wbr-info h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 0.3rem; }
+.wbr-info p { color: #6B7280; font-size: 0.9rem; margin: 0.2rem 0; }
+.wbr-status { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #27AE60; color: white; margin-top: 0.4rem; }
+.wbr-status.inactive { background: #F39C12; }
+
+/* MODALS */
+.modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+.modal.active { display: flex; }
+.modal-content { background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #E5E7EB; }
+.modal-header h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin: 0; }
+.modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6B7280; transition: all 0.3s ease; }
+.modal-close:hover { color: #E74C3C; transform: scale(1.2); }
+.modal-body { padding: 1.5rem; }
+.modal-footer { display: flex; gap: 1rem; justify-content: flex-end; padding: 1.5rem; border-top: 1px solid #E5E7EB; }
