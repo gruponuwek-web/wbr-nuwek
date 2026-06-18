@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// CONFIGURACIÓN - 4 PASOS COMPLETOS (ARREGLADO)
+// CONFIGURACIÓN - 4 PASOS COMPLETOS (ARREGLADO - BOTONES FUNCIONAN)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 let clienteActual = null;
@@ -205,7 +205,6 @@ async function cargarCliente() {
     clienteActual = res.data[0];
     console.log('Cliente cargado:', clienteActual);
     
-    // Mapeo correcto de campos
     document.getElementById('cliente-nombre').value = clienteActual.nombre || '';
     document.getElementById('cliente-direccion').value = clienteActual.dirección || '';
     document.getElementById('cliente-sector').value = clienteActual.sector || '';
@@ -217,8 +216,6 @@ async function cargarCliente() {
     document.getElementById('cliente-tiktok').value = clienteActual.tiktok || '';
     document.getElementById('cliente-erp').value = clienteActual.erp || '';
     document.getElementById('cliente-crm').value = clienteActual.crm || '';
-  } else {
-    console.log('❌ No se cargó cliente');
   }
 }
 
@@ -229,12 +226,10 @@ function toggleEdit(section) {
                 : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok']
                 : ['#cliente-erp', '#cliente-crm'];
   
-  // Habilitar/deshabilitar inputs
   inputs.forEach(id => {
     document.querySelector(id).disabled = !editMode[section];
   });
   
-  // Cambiar botones
   const editBtn = document.getElementById(`btn-editar-${section}`);
   const saveBtn = document.getElementById(`btn-guardar-${section}`);
   
@@ -268,8 +263,20 @@ async function guardarCliente(section) {
   const res = await updateCliente(datos);
   if (res.ok) {
     alert('✅ Guardado correctamente');
+    
     editMode[section] = false;
-    toggleEdit(section); // Para volver a mostrar solo el botón Editar
+    
+    const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web']
+                  : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok']
+                  : ['#cliente-erp', '#cliente-crm'];
+    
+    inputs.forEach(id => { document.querySelector(id).disabled = true; });
+    
+    const editBtn = document.getElementById(`btn-editar-${section}`);
+    const saveBtn = document.getElementById(`btn-guardar-${section}`);
+    editBtn.style.display = 'inline-flex';
+    saveBtn.style.display = 'none';
+    
     cargarCliente();
   } else {
     alert('❌ Error: ' + res.error);
@@ -321,10 +328,6 @@ async function guardarContacto() {
 async function eliminarContacto(id) {
   if (confirm('¿Eliminar?')) { await deleteContacto(id); cargarContactos(); }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// USUARIOS, MÓDULOS, WBR (placeholders por ahora)
-// ═══════════════════════════════════════════════════════════════════════════════
 
 async function cargarUsuarios() {
   const res = await getUsuarios();
