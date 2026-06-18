@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// CONFIGURACIÓN - 4 PASOS COMPLETOS (ARREGLADO - BOTONES FUNCIONAN)
+// CONFIGURACIÓN - 4 PASOS COMPLETOS CON DATOS VISIBLES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 let clienteActual = null;
@@ -194,17 +194,10 @@ function goToStep(stepNum) {
   if (bubble) bubble.classList.add('active');
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CLIENTE
-// ═══════════════════════════════════════════════════════════════════════════════
-
 async function cargarCliente() {
   const res = await getClientes();
-  console.log('Respuesta getClientes:', res);
   if (res.ok && res.data.length > 0) {
     clienteActual = res.data[0];
-    console.log('Cliente cargado:', clienteActual);
-    
     document.getElementById('cliente-nombre').value = clienteActual.nombre || '';
     document.getElementById('cliente-direccion').value = clienteActual.dirección || '';
     document.getElementById('cliente-sector').value = clienteActual.sector || '';
@@ -221,83 +214,28 @@ async function cargarCliente() {
 
 function toggleEdit(section) {
   editMode[section] = !editMode[section];
-  
   const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web']
                 : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok']
                 : ['#cliente-erp', '#cliente-crm'];
-  
-  inputs.forEach(id => {
-    document.querySelector(id).disabled = !editMode[section];
-  });
-  
+  inputs.forEach(id => { document.querySelector(id).disabled = !editMode[section]; });
   const editBtn = document.getElementById(`btn-editar-${section}`);
   const saveBtn = document.getElementById(`btn-guardar-${section}`);
-  
-  if (editMode[section]) {
-    editBtn.style.display = 'none';
-    saveBtn.style.display = 'inline-flex';
-  } else {
-    editBtn.style.display = 'inline-flex';
-    saveBtn.style.display = 'none';
-  }
+  if (editMode[section]) { editBtn.style.display = 'none'; saveBtn.style.display = 'inline-flex'; }
+  else { editBtn.style.display = 'inline-flex'; saveBtn.style.display = 'none'; }
 }
 
 async function guardarCliente(section) {
   if (!clienteActual) return;
-  
-  const datos = {
-    nombre: clienteActual.nombre,
-    dirección: document.getElementById('cliente-direccion').value,
-    sector: document.getElementById('cliente-sector').value,
-    año_fundación: document.getElementById('cliente-year').value,
-    página_web: document.getElementById('cliente-web').value,
-    instagram: document.getElementById('cliente-instagram').value,
-    facebook: document.getElementById('cliente-facebook').value,
-    linkedin: document.getElementById('cliente-linkedin').value,
-    tiktok: document.getElementById('cliente-tiktok').value,
-    erp: document.getElementById('cliente-erp').value,
-    crm: document.getElementById('cliente-crm').value
-  };
-  
-  console.log('Guardando:', datos);
+  const datos = { nombre: clienteActual.nombre, dirección: document.getElementById('cliente-direccion').value, sector: document.getElementById('cliente-sector').value, año_fundación: document.getElementById('cliente-year').value, página_web: document.getElementById('cliente-web').value, instagram: document.getElementById('cliente-instagram').value, facebook: document.getElementById('cliente-facebook').value, linkedin: document.getElementById('cliente-linkedin').value, tiktok: document.getElementById('cliente-tiktok').value, erp: document.getElementById('cliente-erp').value, crm: document.getElementById('cliente-crm').value };
   const res = await updateCliente(datos);
-  if (res.ok) {
-    alert('✅ Guardado correctamente');
-    
-    editMode[section] = false;
-    
-    const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web']
-                  : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok']
-                  : ['#cliente-erp', '#cliente-crm'];
-    
-    inputs.forEach(id => { document.querySelector(id).disabled = true; });
-    
-    const editBtn = document.getElementById(`btn-editar-${section}`);
-    const saveBtn = document.getElementById(`btn-guardar-${section}`);
-    editBtn.style.display = 'inline-flex';
-    saveBtn.style.display = 'none';
-    
-    cargarCliente();
-  } else {
-    alert('❌ Error: ' + res.error);
-  }
+  if (res.ok) { alert('✅ Guardado'); editMode[section] = false; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = true; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); editBtn.style.display = 'inline-flex'; saveBtn.style.display = 'none'; cargarCliente(); }
 }
 
 async function cargarContactos() {
   const res = await getContactos();
   if (res.ok) {
     const lista = document.getElementById('contactos-list');
-    lista.innerHTML = res.data.map(c => `
-      <div class="contacto-item">
-        <div class="contacto-info">
-          <h4>${c.nombre}</h4>
-          <p><strong>Puesto:</strong> ${c.puesto}</p>
-          <p><strong>Tel:</strong> ${c.teléfono}</p>
-          <p><strong>Email:</strong> ${c.correo}</p>
-        </div>
-        <button class="btn btn-danger" onclick="eliminarContacto('${c.id_contacto}')">❌</button>
-      </div>
-    `).join('');
+    lista.innerHTML = res.data.map(c => `<div class="contacto-item"><div class="contacto-info"><h4>${c.nombre}</h4><p><strong>Puesto:</strong> ${c.puesto}</p><p><strong>Tel:</strong> ${c.teléfono}</p><p><strong>Email:</strong> ${c.correo}</p></div><button class="btn btn-danger" onclick="eliminarContacto('${c.id_contacto}')">❌</button></div>`).join('');
   }
 }
 
@@ -310,17 +248,8 @@ function openModalContacto() {
 }
 
 async function guardarContacto() {
-  const datos = {
-    id_contacto: 'C' + Date.now(),
-    nombre: document.getElementById('contacto-nombre').value,
-    puesto: document.getElementById('contacto-puesto').value,
-    teléfono: document.getElementById('contacto-telefono').value,
-    correo: document.getElementById('contacto-correo').value
-  };
-  if (!datos.nombre || !datos.puesto || !datos.teléfono || !datos.correo) {
-    alert('❌ Completa todos los campos');
-    return;
-  }
+  const datos = { id_contacto: 'C' + Date.now(), nombre: document.getElementById('contacto-nombre').value, puesto: document.getElementById('contacto-puesto').value, teléfono: document.getElementById('contacto-telefono').value, correo: document.getElementById('contacto-correo').value };
+  if (!datos.nombre || !datos.puesto || !datos.teléfono || !datos.correo) { alert('❌ Completa todos'); return; }
   const res = await createContacto(datos);
   if (res.ok) { closeModal('contacto'); cargarContactos(); }
 }
@@ -334,7 +263,7 @@ async function cargarUsuarios() {
   if (res.ok) {
     usuariosEditando = JSON.parse(JSON.stringify(res.data));
     const lista = document.getElementById('usuarios-list');
-    lista.innerHTML = `<table class="usuarios-table"><thead><tr><th>Nombre</th><th>Rol</th><th>Categoría</th></tr></thead><tbody>${usuariosEditando.map(u => `<tr><td>${u.nombre}</td><td>${u.rol}</td><td>${u.categoría || '-'}</td></tr>`).join('')}</tbody></table>`;
+    lista.innerHTML = `<table class="usuarios-table"><thead><tr><th>Nombre</th><th>Rol</th><th>Categoría</th><th>Estado</th></tr></thead><tbody>${usuariosEditando.map(u => `<tr><td>${u.nombre}</td><td>${u.rol}</td><td>${u.categoría || '-'}</td><td>${u.activo || 'Activo'}</td></tr>`).join('')}</tbody></table>`;
   }
 }
 
@@ -351,27 +280,10 @@ function openModalUsuario() {
 }
 
 async function guardarUsuario() {
-  const datos = {
-    id_usuario: 'U' + Date.now(),
-    nombre: document.getElementById('usuario-nombre').value,
-    correo: document.getElementById('usuario-correo').value,
-    teléfono: document.getElementById('usuario-telefono').value,
-    rol: document.getElementById('usuario-rol').value,
-    categoría: document.getElementById('usuario-categoria').value || '-',
-    cumpleaños: document.getElementById('usuario-cumpleanos').value || '',
-    fecha_ingreso: document.getElementById('usuario-fecha-ingreso').value,
-    activo: document.querySelector('input[name="usuario-activo"]:checked').value
-  };
-  if (!datos.nombre || !datos.correo || !datos.teléfono || !datos.rol || !datos.fecha_ingreso) {
-    alert('❌ Completa campos requeridos');
-    return;
-  }
+  const datos = { id_usuario: 'U' + Date.now(), nombre: document.getElementById('usuario-nombre').value, correo: document.getElementById('usuario-correo').value, teléfono: document.getElementById('usuario-telefono').value, rol: document.getElementById('usuario-rol').value, categoría: document.getElementById('usuario-categoria').value || '-', cumpleaños: document.getElementById('usuario-cumpleanos').value || '', fecha_ingreso: document.getElementById('usuario-fecha-ingreso').value, activo: document.querySelector('input[name="usuario-activo"]:checked').value };
+  if (!datos.nombre || !datos.correo || !datos.teléfono || !datos.rol || !datos.fecha_ingreso) { alert('❌ Completa requeridos'); return; }
   const res = await createUsuario(datos);
   if (res.ok) { closeModal('usuario'); cargarUsuarios(); }
-}
-
-async function eliminarUsuario(id) {
-  if (confirm('¿Eliminar?')) { await deleteUsuario(id); cargarUsuarios(); }
 }
 
 async function guardarUsuarios() { alert('✅ Guardado'); }
@@ -385,10 +297,7 @@ async function cargarModulos() {
   }
 }
 
-function toggleModulo(id, checked) {
-  const m = modulosEditando.find(x => x.id_módulo === id);
-  if (m) m.activo = checked ? 'Sí' : 'No';
-}
+function toggleModulo(id, checked) { const m = modulosEditando.find(x => x.id_módulo === id); if (m) m.activo = checked ? 'Sí' : 'No'; }
 
 async function guardarModulos() { for (const m of modulosEditando) await updateModulo(m); alert('✅ Guardado'); }
 
@@ -397,7 +306,7 @@ async function cargarWbr() {
   if (res.ok) {
     wbrEditando = JSON.parse(JSON.stringify(res.data));
     const lista = document.getElementById('wbr-list');
-    lista.innerHTML = wbrEditando.map(p => `<div class="wbr-item"><div class="wbr-info"><h4>Paso ${p.paso}: ${p.nombre}</h4><p>${p.descripción}</p></div><button class="btn btn-primary" onclick="openWbrConfigModal(${p.paso})">⚙️</button></div>`).join('');
+    lista.innerHTML = wbrEditando.map(p => `<div class="wbr-item"><div class="wbr-info"><h4>Paso ${p.paso}: ${p.nombre}</h4><p>${p.descripción}</p><div class="wbr-status ${p.activo !== 'Sí' ? 'inactive' : ''}">${p.activo === 'Sí' ? '✅ Activo' : '⏸️ Apagado'}</div></div><button class="btn btn-primary" onclick="openWbrConfigModal(${p.paso})">⚙️ Configurar</button></div>`).join('');
   }
 }
 
