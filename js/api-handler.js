@@ -2,7 +2,7 @@
 // API HANDLER - Conexión con Google Sheets via Apps Script
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const GS_URL = "https://script.google.com/macros/s/AKfycbxZPyLCZk5aFTIvEiI-BaIr9fGlvfRrcmQiOHUnBhJ3D6xCc-X_py5k6I2OZ2rO89wN/exec";
+const GS_URL = "https://script.google.com/macros/s/AKfycbzEDNZzs6YLNF_DFPaxD_GWmYQ47d3LEbGrqdLbT8wB7WCvcvJTLa-pv8BRPfhhg2sW/exec";
 
 async function callGS(action, data = {}) {
   try {
