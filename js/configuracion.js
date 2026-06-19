@@ -9,89 +9,99 @@ function loadConfiguracionModule() {
   const mainContent = document.getElementById('main-content');
   
   const html = `
-    <link rel="stylesheet" href="css/configuracion.css">
-    <div class="config-container">
+    <div class="config-container" style="padding: 20px; max-width: 1000px; margin: 0 auto;">
       <h1>⚙️ Configuración</h1>
-      <div class="progress-steps">
-        <div class="step active" data-step="1" onclick="goToStep(1)"><div class="step-circle">1</div><div class="step-label">Cliente</div></div>
-        <div class="step" data-step="2" onclick="goToStep(2)"><div class="step-circle">2</div><div class="step-label">Usuarios</div></div>
-        <div class="step" data-step="3" onclick="goToStep(3)"><div class="step-circle">3</div><div class="step-label">Módulos</div></div>
-        <div class="step" data-step="4" onclick="goToStep(4)"><div class="step-circle">4</div><div class="step-label">WBR</div></div>
+      <div class="progress-steps" style="display: flex; justify-content: space-around; margin: 40px 0; padding: 20px; border-bottom: 2px solid #ddd;">
+        <div class="step active" data-step="1" onclick="goToStep(1)" style="text-align: center; cursor: pointer;">
+          <div class="step-circle" style="width: 50px; height: 50px; background: #4a90e2; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold;">1</div>
+          <div class="step-label" style="margin-top: 10px;">Cliente</div>
+        </div>
+        <div class="step" data-step="2" onclick="goToStep(2)" style="text-align: center; cursor: pointer;">
+          <div class="step-circle" style="width: 50px; height: 50px; background: #ccc; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold;">2</div>
+          <div class="step-label" style="margin-top: 10px;">Usuarios</div>
+        </div>
+        <div class="step" data-step="3" onclick="goToStep(3)" style="text-align: center; cursor: pointer;">
+          <div class="step-circle" style="width: 50px; height: 50px; background: #ccc; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold;">3</div>
+          <div class="step-label" style="margin-top: 10px;">Módulos</div>
+        </div>
+        <div class="step" data-step="4" onclick="goToStep(4)" style="text-align: center; cursor: pointer;">
+          <div class="step-circle" style="width: 50px; height: 50px; background: #ccc; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: bold;">4</div>
+          <div class="step-label" style="margin-top: 10px;">WBR</div>
+        </div>
       </div>
       
-      <div class="config-step active" id="step-1" data-step="1">
+      <div class="config-step active" id="step-1" data-step="1" style="display: block;">
         <h2>📋 Datos del Cliente</h2>
-        <div class="config-section">
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>Información General</h3>
-          <div class="form-group"><label>Nombre</label><input type="text" id="cliente-nombre" readonly></div>
-          <div class="form-group"><label>Dirección</label><input type="text" id="cliente-direccion" disabled></div>
-          <div class="form-group"><label>Sector</label><input type="text" id="cliente-sector" disabled></div>
-          <div class="form-group"><label>Año de Fundación</label><input type="number" id="cliente-year" disabled></div>
-          <div class="form-group"><label>Página Web</label><input type="url" id="cliente-web" disabled></div>
-          <div class="button-group">
-            <button class="btn btn-primary" id="btn-editar-info" onclick="toggleEdit('info')">✏️ Editar</button>
-            <button class="btn btn-success" id="btn-guardar-info" onclick="guardarCliente('info')" style="display:none;">💾 Guardar</button>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre</label><input type="text" id="cliente-nombre" readonly style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Dirección</label><input type="text" id="cliente-direccion" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Sector</label><input type="text" id="cliente-sector" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Año de Fundación</label><input type="number" id="cliente-year" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Página Web</label><input type="url" id="cliente-web" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin-top: 20px;">
+            <button class="btn btn-primary" id="btn-editar-info" onclick="toggleEdit('info')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button>
+            <button class="btn btn-success" id="btn-guardar-info" onclick="guardarCliente('info')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
           </div>
         </div>
-        <div class="config-section">
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>🔗 Redes Sociales</h3>
-          <div class="form-group"><label>Instagram</label><input type="text" id="cliente-instagram" disabled></div>
-          <div class="form-group"><label>Facebook</label><input type="text" id="cliente-facebook" disabled></div>
-          <div class="form-group"><label>LinkedIn</label><input type="text" id="cliente-linkedin" disabled></div>
-          <div class="form-group"><label>TikTok</label><input type="text" id="cliente-tiktok" disabled></div>
-          <div class="button-group">
-            <button class="btn btn-primary" id="btn-editar-redes" onclick="toggleEdit('redes')">✏️ Editar</button>
-            <button class="btn btn-success" id="btn-guardar-redes" onclick="guardarCliente('redes')" style="display:none;">💾 Guardar</button>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Instagram</label><input type="text" id="cliente-instagram" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Facebook</label><input type="text" id="cliente-facebook" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">LinkedIn</label><input type="text" id="cliente-linkedin" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">TikTok</label><input type="text" id="cliente-tiktok" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin-top: 20px;">
+            <button class="btn btn-primary" id="btn-editar-redes" onclick="toggleEdit('redes')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button>
+            <button class="btn btn-success" id="btn-guardar-redes" onclick="guardarCliente('redes')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
           </div>
         </div>
-        <div class="config-section">
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>💻 Sistemas y Herramientas</h3>
-          <div class="form-group"><label>ERP</label><input type="text" id="cliente-erp" disabled></div>
-          <div class="form-group"><label>CRM</label><input type="text" id="cliente-crm" disabled></div>
-          <div class="button-group">
-            <button class="btn btn-primary" id="btn-editar-sistemas" onclick="toggleEdit('sistemas')">✏️ Editar</button>
-            <button class="btn btn-success" id="btn-guardar-sistemas" onclick="guardarCliente('sistemas')" style="display:none;">💾 Guardar</button>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">ERP</label><input type="text" id="cliente-erp" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">CRM</label><input type="text" id="cliente-crm" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></div>
+          <div style="margin-top: 20px;">
+            <button class="btn btn-primary" id="btn-editar-sistemas" onclick="toggleEdit('sistemas')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button>
+            <button class="btn btn-success" id="btn-guardar-sistemas" onclick="guardarCliente('sistemas')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
           </div>
         </div>
-        <div class="config-section">
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>👥 Contactos</h3>
-          <div id="contactos-list" class="contactos-list"></div>
-          <button class="btn btn-secondary" onclick="openModalContacto()">➕ Agregar Contacto</button>
+          <div id="contactos-list" style="margin: 10px 0;"></div>
         </div>
-        <div class="button-group step-nav">
-          <button class="btn btn-next" onclick="goToStep(2)">Siguiente →</button>
+        <div style="margin: 40px 0; display: flex; justify-content: flex-end;">
+          <button class="btn btn-next" onclick="goToStep(2)" style="padding: 12px 24px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Siguiente →</button>
         </div>
       </div>
 
       <div class="config-step" id="step-2" data-step="2" style="display:none;">
         <h2>👥 Usuarios y Permisos</h2>
-        <div class="usuarios-list" id="usuarios-list"></div>
-        <button class="btn btn-secondary" onclick="openModalUsuario()">➕ Agregar Usuario</button>
-        <button class="btn btn-success" onclick="guardarUsuarios()" style="margin-left: 10px;">💾 Guardar Cambios</button>
-        <div class="button-group step-nav">
-          <button class="btn btn-prev" onclick="goToStep(1)">← Anterior</button>
-          <button class="btn btn-next" onclick="goToStep(3)">Siguiente →</button>
+        <div id="usuarios-list" style="margin: 20px 0; background: white; padding: 20px; border-radius: 8px; overflow-x: auto;"></div>
+        <button class="btn btn-secondary" onclick="openModalUsuario()" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">➕ Agregar Usuario</button>
+        <button class="btn btn-success" onclick="guardarUsuarios()" style="margin-left: 10px; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar Cambios</button>
+        <div style="margin: 40px 0; display: flex; justify-content: space-between;">
+          <button class="btn btn-prev" onclick="goToStep(1)" style="padding: 12px 24px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">← Anterior</button>
+          <button class="btn btn-next" onclick="goToStep(3)" style="padding: 12px 24px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">Siguiente →</button>
         </div>
       </div>
 
       <div class="config-step" id="step-3" data-step="3" style="display:none;">
         <h2>🎛️ Módulos</h2>
-        <p class="section-hint">Selecciona qué módulos activa para este cliente</p>
-        <div class="modulos-list" id="modulos-list"></div>
-        <button class="btn btn-success" onclick="guardarModulos()" style="margin-top: 20px;">💾 Guardar Módulos</button>
-        <p class="section-hint" style="margin-top: 20px;">💡 Nota: Acciones e Historial siempre están activos</p>
-        <div class="button-group step-nav">
-          <button class="btn btn-prev" onclick="goToStep(2)">← Anterior</button>
-          <button class="btn btn-next" onclick="goToStep(4)">Siguiente →</button>
+        <p style="color: #666; font-size: 14px;">Selecciona qué módulos activa para este cliente</p>
+        <div id="modulos-list" style="margin: 20px 0; background: white; padding: 20px; border-radius: 8px;"></div>
+        <button class="btn btn-success" onclick="guardarModulos()" style="margin-top: 20px; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar Módulos</button>
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">💡 Nota: Acciones e Historial siempre están activos</p>
+        <div style="margin: 40px 0; display: flex; justify-content: space-between;">
+          <button class="btn btn-prev" onclick="goToStep(2)" style="padding: 12px 24px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">← Anterior</button>
+          <button class="btn btn-next" onclick="goToStep(4)" style="padding: 12px 24px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">Siguiente →</button>
         </div>
       </div>
 
       <div class="config-step" id="step-4" data-step="4" style="display:none;">
         <h2>📅 Estructura WBR</h2>
-        <div class="wbr-list" id="wbr-list"></div>
-        <button class="btn btn-success" onclick="guardarWbr()" style="margin-top: 20px;">💾 Guardar Estructura</button>
-        <div class="button-group step-nav">
-          <button class="btn btn-prev" onclick="goToStep(3)">← Anterior</button>
+        <div id="wbr-list" style="margin: 20px 0; background: white; padding: 20px; border-radius: 8px;"></div>
+        <button class="btn btn-success" onclick="guardarWbr()" style="margin-top: 20px; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar Estructura</button>
+        <div style="margin: 40px 0; display: flex; justify-content: flex-start;">
+          <button class="btn btn-prev" onclick="goToStep(3)" style="padding: 12px 24px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">← Anterior</button>
         </div>
       </div>
     </div>
@@ -102,117 +112,58 @@ function loadConfiguracionModule() {
   setTimeout(() => { console.log('⏱️ Iniciando carga de datos...'); cargarConfiguracion(); }, 100);
 }
 
-async function cargarConfiguracion() { 
-  console.log('📊 cargarConfiguracion'); 
-  await cargarCliente(); 
-  await cargarContactos(); 
-  await cargarUsuarios(); 
-  await cargarModulos(); 
-  await cargarWbr(); 
-  console.log('✅ Todos los datos cargados'); 
-}
+async function cargarConfiguracion() { await cargarCliente(); await cargarContactos(); await cargarUsuarios(); await cargarModulos(); await cargarWbr(); console.log('✅ Todos los datos cargados'); }
 
 function goToStep(stepNum) { 
-  console.log('📍 goToStep:', stepNum); 
-  document.querySelectorAll('.config-step').forEach(s => s.classList.remove('active')); 
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); 
+  document.querySelectorAll('.config-step').forEach(s => s.style.display = 'none'); 
+  document.querySelectorAll('.step .step-circle').forEach(s => s.style.background = '#ccc'); 
   const step = document.getElementById(`step-${stepNum}`); 
-  if (step) step.classList.add('active'); 
-  const bubble = document.querySelector(`.step[data-step="${stepNum}"]`); 
-  if (bubble) bubble.classList.add('active'); 
+  if (step) step.style.display = 'block'; 
+  const bubble = document.querySelector(`.step[data-step="${stepNum}"] .step-circle`); 
+  if (bubble) bubble.style.background = '#4a90e2'; 
 }
 
-async function cargarCliente() { 
-  console.log('👤 cargarCliente'); 
-  const res = await getClientes(); 
-  if (res.ok && res.data.length > 0) { 
-    clienteActual = res.data[0]; 
-    document.getElementById('cliente-nombre').value = clienteActual.nombre || ''; 
-    document.getElementById('cliente-direccion').value = clienteActual.dirección || ''; 
-    document.getElementById('cliente-sector').value = clienteActual.sector || ''; 
-    document.getElementById('cliente-year').value = clienteActual.año_fundación || ''; 
-    document.getElementById('cliente-web').value = clienteActual.página_web || ''; 
-    document.getElementById('cliente-instagram').value = clienteActual.instagram || ''; 
-    document.getElementById('cliente-facebook').value = clienteActual.facebook || ''; 
-    document.getElementById('cliente-linkedin').value = clienteActual.linkedin || ''; 
-    document.getElementById('cliente-tiktok').value = clienteActual.tiktok || ''; 
-    document.getElementById('cliente-erp').value = clienteActual.erp || ''; 
-    document.getElementById('cliente-crm').value = clienteActual.crm || ''; 
-    console.log('✅ Cliente cargado'); 
-  } 
-}
+async function cargarCliente() { const res = await getClientes(); if (res.ok && res.data.length > 0) { clienteActual = res.data[0]; document.getElementById('cliente-nombre').value = clienteActual.nombre || ''; document.getElementById('cliente-direccion').value = clienteActual.dirección || ''; document.getElementById('cliente-sector').value = clienteActual.sector || ''; document.getElementById('cliente-year').value = clienteActual.año_fundación || ''; document.getElementById('cliente-web').value = clienteActual.página_web || ''; document.getElementById('cliente-instagram').value = clienteActual.instagram || ''; document.getElementById('cliente-facebook').value = clienteActual.facebook || ''; document.getElementById('cliente-linkedin').value = clienteActual.linkedin || ''; document.getElementById('cliente-tiktok').value = clienteActual.tiktok || ''; document.getElementById('cliente-erp').value = clienteActual.erp || ''; document.getElementById('cliente-crm').value = clienteActual.crm || ''; console.log('✅ Cliente cargado'); } }
 
-function toggleEdit(section) { 
-  editMode[section] = !editMode[section]; 
-  const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; 
-  inputs.forEach(id => { document.querySelector(id).disabled = !editMode[section]; }); 
-  const editBtn = document.getElementById(`btn-editar-${section}`); 
-  const saveBtn = document.getElementById(`btn-guardar-${section}`); 
-  if (editMode[section]) { editBtn.style.display = 'none'; saveBtn.style.display = 'inline-flex'; } else { editBtn.style.display = 'inline-flex'; saveBtn.style.display = 'none'; } 
-}
+function toggleEdit(section) { editMode[section] = !editMode[section]; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = !editMode[section]; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); if (editMode[section]) { editBtn.style.display = 'none'; saveBtn.style.display = 'inline-block'; } else { editBtn.style.display = 'inline-block'; saveBtn.style.display = 'none'; } }
 
-async function guardarCliente(section) { 
-  if (!clienteActual) return; 
-  const datos = { nombre: clienteActual.nombre, dirección: document.getElementById('cliente-direccion').value, sector: document.getElementById('cliente-sector').value, año_fundación: document.getElementById('cliente-year').value, página_web: document.getElementById('cliente-web').value, instagram: document.getElementById('cliente-instagram').value, facebook: document.getElementById('cliente-facebook').value, linkedin: document.getElementById('cliente-linkedin').value, tiktok: document.getElementById('cliente-tiktok').value, erp: document.getElementById('cliente-erp').value, crm: document.getElementById('cliente-crm').value }; 
-  const res = await updateCliente(datos); 
-  if (res.ok) { alert('✅ Guardado'); editMode[section] = false; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = true; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); editBtn.style.display = 'inline-flex'; saveBtn.style.display = 'none'; cargarCliente(); } 
-}
+async function guardarCliente(section) { if (!clienteActual) return; const datos = { nombre: clienteActual.nombre, dirección: document.getElementById('cliente-direccion').value, sector: document.getElementById('cliente-sector').value, año_fundación: document.getElementById('cliente-year').value, página_web: document.getElementById('cliente-web').value, instagram: document.getElementById('cliente-instagram').value, facebook: document.getElementById('cliente-facebook').value, linkedin: document.getElementById('cliente-linkedin').value, tiktok: document.getElementById('cliente-tiktok').value, erp: document.getElementById('cliente-erp').value, crm: document.getElementById('cliente-crm').value }; const res = await updateCliente(datos); if (res.ok) { alert('✅ Guardado'); editMode[section] = false; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = true; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); editBtn.style.display = 'inline-block'; saveBtn.style.display = 'none'; cargarCliente(); } }
 
-async function cargarContactos() { 
-  console.log('📧 cargarContactos'); 
-  const res = await getContactos(); 
-  if (res.ok) { 
-    const lista = document.getElementById('contactos-list'); 
-    lista.innerHTML = res.data.map(c => `<div class="contacto-item"><div class="contacto-info"><h4>${c.nombre}</h4><p><strong>Puesto:</strong> ${c.puesto}</p></div></div>`).join(''); 
-    console.log('✅ Contactos:', res.data.length); 
-  } 
-}
-
-function openModalContacto() { alert('Modal contacto - En construcción'); }
-async function guardarContacto() { }
-async function eliminarContacto(id) { }
-
-async function cargarUsuarios() { 
-  console.log('👥 cargarUsuarios'); 
-  const res = await getUsuarios(); 
-  if (res.ok) { 
-    usuariosEditando = res.data; 
-    const lista = document.getElementById('usuarios-list');
-    console.log('Elemento usuarios-list:', lista);
-    if (lista) { 
-      let html = '<table class="usuarios-table"><thead><tr><th>Nombre</th><th>Rol</th><th>Categoría</th></tr></thead><tbody>';
-      res.data.forEach(u => {
-        html += `<tr><td>${u.nombre}</td><td>${u.rol}</td><td>${u.categoría || '-'}</td></tr>`;
-      });
-      html += '</tbody></table>';
-      lista.innerHTML = html;
-      console.log('✅ Usuarios HTML inyectado:', res.data.length); 
-    } else {
-      console.log('❌ No encontré elemento usuarios-list');
-    }
-  } 
-}
+async function cargarContactos() { const res = await getContactos(); if (res.ok) { const lista = document.getElementById('contactos-list'); lista.innerHTML = res.data.map(c => `<div style="padding: 10px; border: 1px solid #eee; border-radius: 4px; margin: 5px 0; background: #fafafa;"><strong>${c.nombre}</strong><br><small>${c.puesto} | ${c.teléfono}</small></div>`).join(''); console.log('✅ Contactos:', res.data.length); } }
 
 function openModalUsuario() { alert('Modal usuario - En construcción'); }
 async function guardarUsuario() { }
 async function guardarUsuarios() { alert('✅ Guardado'); }
 
+async function cargarUsuarios() { 
+  const res = await getUsuarios(); 
+  if (res.ok) { 
+    usuariosEditando = res.data; 
+    const lista = document.getElementById('usuarios-list');
+    if (lista) { 
+      let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;"><th style="padding: 12px; text-align: left;">Nombre</th><th style="padding: 12px; text-align: left;">Rol</th><th style="padding: 12px; text-align: left;">Categoría</th></tr></thead><tbody>';
+      res.data.forEach((u, idx) => {
+        html += `<tr style="border-bottom: 1px solid #eee; ${idx % 2 === 0 ? 'background: #f9f9f9;' : ''}"><td style="padding: 12px;">${u.nombre}</td><td style="padding: 12px;">${u.rol}</td><td style="padding: 12px;">${u.categoría || '-'}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      lista.innerHTML = html;
+      console.log('✅ Usuarios HTML inyectado'); 
+    }
+  } 
+}
+
 async function cargarModulos() { 
-  console.log('🎛️ cargarModulos'); 
   const res = await getModulos(); 
   if (res.ok) { 
     modulosEditando = res.data; 
     const lista = document.getElementById('modulos-list');
-    console.log('Elemento modulos-list:', lista);
     if (lista) { 
       let html = '';
       res.data.forEach(m => {
-        html += `<div class="modulo-item"><input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)"><div class="modulo-info"><h4>${m.nombre_módulo}</h4></div></div>`;
+        html += `<div style="padding: 12px; border: 1px solid #eee; border-radius: 4px; margin: 8px 0; display: flex; align-items: center;"><input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 10px;"><label style="cursor: pointer; flex: 1;">${m.nombre_módulo}</label></div>`;
       });
       lista.innerHTML = html;
-      console.log('✅ Módulos HTML inyectado:', res.data.length); 
-    } else {
-      console.log('❌ No encontré elemento modulos-list');
+      console.log('✅ Módulos HTML inyectado'); 
     }
   } 
 }
@@ -221,21 +172,17 @@ function toggleModulo(id, checked) { const m = modulosEditando.find(x => x.id_m�
 async function guardarModulos() { for (const m of modulosEditando) await updateModulo(m); alert('✅ Guardado'); }
 
 async function cargarWbr() { 
-  console.log('📅 cargarWbr'); 
   const res = await getWbrConfig(); 
   if (res.ok) { 
     wbrEditando = res.data; 
     const lista = document.getElementById('wbr-list');
-    console.log('Elemento wbr-list:', lista);
     if (lista) { 
       let html = '';
       res.data.forEach(p => {
-        html += `<div class="wbr-item"><div class="wbr-info"><h4>Paso ${p.paso}: ${p.nombre}</h4><p>${p.descripción}</p></div><button class="btn btn-primary" onclick="alert('WBR modal - En construcción')">⚙️</button></div>`;
+        html += `<div style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; background: #fafafa; display: flex; justify-content: space-between; align-items: center;"><div><h4 style="margin: 0 0 5px 0;">Paso ${p.paso}: ${p.nombre}</h4><p style="margin: 0; color: #666; font-size: 13px;">${p.descripción}</p></div><button onclick="alert('WBR config - En construcción')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">⚙️</button></div>`;
       });
       lista.innerHTML = html;
-      console.log('✅ WBR HTML inyectado:', res.data.length); 
-    } else {
-      console.log('❌ No encontré elemento wbr-list');
+      console.log('✅ WBR HTML inyectado'); 
     }
   } 
 }
