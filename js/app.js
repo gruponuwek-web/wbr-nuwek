@@ -1,17 +1,11 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// APP.JS - Orquestador Principal
-// ═══════════════════════════════════════════════════════════════════════════════
-
 let modulosActivos = [];
 let paginaActual = 'dashboard';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 EVA+ Portal inicializando...');
-  
   await cargarModulosActivos();
   renderNavbar();
   mostrarModulo('dashboard');
-  
   console.log('✅ Portal listo');
 });
 
@@ -26,7 +20,6 @@ async function cargarModulosActivos() {
 function renderNavbar() {
   const menu = document.getElementById('navbar-menu');
   menu.innerHTML = '';
-  
   const items = [
     { id: 'dashboard', label: '📊 Dashboard', siempre: true },
     { id: 'pipeline', label: '🚀 Pipeline', siempre: true },
@@ -36,10 +29,8 @@ function renderNavbar() {
     { id: 'acciones', label: '✏️ Acciones', siempre: true },
     { id: 'configuracion', label: '⚙️ Configuración', siempre: true }
   ];
-  
   items.forEach(item => {
     const visible = item.siempre || (item.config && modulosActivos.includes(item.config));
-    
     if (visible) {
       const li = document.createElement('li');
       li.textContent = item.label;
@@ -51,35 +42,18 @@ function renderNavbar() {
 }
 
 function mostrarModulo(moduloId) {
-  // Actualizar navbar
+  console.log('🔄 mostrarModulo:', moduloId);
   document.querySelectorAll('.navbar-menu li').forEach(li => li.classList.remove('active'));
   const navItem = document.getElementById(`nav-${moduloId}`);
   if (navItem) navItem.classList.add('active');
-  
-  // Cargar módulo
   switch(moduloId) {
-    case 'dashboard':
-      loadDashboardModule();
-      break;
-    case 'pipeline':
-      loadPipelineModule();
-      break;
-    case 'wbr':
-      loadWbrModule();
-      break;
-    case 'acciones':
-      loadAccionesModule();
-      break;
-    case 'metas-ventas':
-      loadMetasVentasModule();
-      break;
-    case 'metas-marketing':
-      loadMetasMarketingModule();
-      break;
-    case 'configuracion':
-      loadConfiguracionModule();
-      break;
+    case 'dashboard': loadDashboardModule(); break;
+    case 'pipeline': loadPipelineModule(); break;
+    case 'wbr': loadWbrModule(); break;
+    case 'acciones': loadAccionesModule(); break;
+    case 'metas-ventas': loadMetasVentasModule(); break;
+    case 'metas-marketing': loadMetasMarketingModule(); break;
+    case 'configuracion': console.log('⚙️ Llamando loadConfiguracionModule'); loadConfiguracionModule(); break;
   }
-  
   paginaActual = moduloId;
 }
