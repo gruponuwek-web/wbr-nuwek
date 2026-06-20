@@ -427,6 +427,11 @@ async function guardarModulos() {
   }
   alert('✅ Módulos guardados correctamente');
   await cargarModulos();
+  // Actualizar navbar después de guardar
+  if (window.actualizarNavbar) {
+    console.log('🔄 Llamando actualizarNavbar()');
+    window.actualizarNavbar();
+  }
 }
 
 async function cargarWbr() { 

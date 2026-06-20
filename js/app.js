@@ -17,6 +17,13 @@ async function cargarModulosActivos() {
   }
 }
 
+async function actualizarNavbar() {
+  console.log('🔄 actualizarNavbar() - Recargar módulos activos y navbar');
+  await cargarModulosActivos();
+  renderNavbar();
+  console.log('✅ Navbar actualizado');
+}
+
 function renderNavbar() {
   const menu = document.getElementById('navbar-menu');
   menu.innerHTML = '';
