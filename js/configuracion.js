@@ -481,7 +481,32 @@ async function cargarWbr() {
     if (lista) { 
       let html = '';
       res.data.forEach(p => {
-        html += `<div style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; background: #fafafa; display: flex; justify-content: space-between; align-items: center;"><div><h4 style="margin: 0 0 5px 0;">Paso ${p.paso}: ${p.nombre}</h4><p style="margin: 0; color: #666; font-size: 13px;">${p.descripción}</p></div><button onclick="alert('WBR config - En construcción')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">⚙️</button></div>`;
+        const esOpcional = p.paso === 1 || p.paso === 2;
+        const siempreActivo = p.paso === 3 || p.paso === 4;
+        
+        if (esOpcional) {
+          // Paso 1 y 2: Con checkbox
+          html += `<div style="padding: 15px; border: 1px solid #eee; border-radius: 4px; margin: 10px 0; background: #fafafa;">
+            <div style="display: flex; align-items: flex-start;">
+              <input type="checkbox" ${p.activo === 'Sí' ? 'checked' : ''} onchange="toggleWbr(${p.paso}, this.checked)" style="margin-right: 12px; margin-top: 3px; cursor: pointer;">
+              <div style="flex: 1;">
+                <label style="cursor: pointer; font-weight: bold; display: block;">Paso ${p.paso}: ${p.nombre}</label>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${p.descripción}</p>
+              </div>
+            </div>
+          </div>`;
+        } else {
+          // Paso 3 y 4: Siempre activos, sin checkbox
+          html += `<div style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; background: #f0f8ff;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div style="flex: 1;">
+                <label style="font-weight: bold; display: block;">✅ Paso ${p.paso}: ${p.nombre}</label>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${p.descripción}</p>
+                <p style="margin: 8px 0 0 0; font-size: 11px; color: #999;">(Siempre activo)</p>
+              </div>
+            </div>
+          </div>`;
+        }
       });
       lista.innerHTML = html;
       console.log('✅ WBR HTML inyectado'); 
@@ -489,8 +514,19 @@ async function cargarWbr() {
   } 
 }
 
+function toggleWbr(paso, checked) {
+  const p = wbrEditando.find(x => x.paso === paso);
+  if (p) p.activo = checked ? 'Sí' : 'No';
+}
+
 async function guardarWbr() { 
-  alert('✅ Guardado'); 
+  console.log('💾 Guardando estructura WBR...');
+  for (const p of wbrEditando) {
+    const res = await updateWbrConfig(p);
+    console.log(`✅ Paso ${p.paso} guardado`);
+  }
+  alert('✅ Estructura WBR guardada correctamente');
+  await cargarWbr();
 }
 
 // ====== FUNCIÓN PARA ABRIR CONFIGURACIÓN DE MÓDULOS ======
