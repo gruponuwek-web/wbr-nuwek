@@ -14,6 +14,29 @@ const modulosDescripciones = {
   'Metas de Marketing': 'Seguimiento de objetivos de marketing y promociones'
 };
 
+// Función para formatear fechas
+function formatearFecha(fechaISO, formato = 'DD/MM') {
+  if (!fechaISO) return '';
+  
+  // Si ya está en formato simple (DD/MM o DD/MM/YYYY), devolverlo tal cual
+  if (fechaISO.includes('/')) return fechaISO;
+  
+  try {
+    const fecha = new Date(fechaISO);
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const año = fecha.getFullYear();
+    
+    if (formato === 'DD/MM/YYYY') {
+      return `${dia}/${mes}/${año}`;
+    } else {
+      return `${dia}/${mes}`;
+    }
+  } catch (e) {
+    return fechaISO;
+  }
+}
+
 function loadConfiguracionModule() {
   console.log('🔧 loadConfiguracionModule EJECUTÁNDOSE');
   const mainContent = document.getElementById('main-content');
@@ -152,7 +175,7 @@ function loadConfiguracionModule() {
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Categoría</label><select id="usuario-categoria" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">-</option><option value="Ruta">Ruta</option><option value="Comercial">Comercial</option><option value="Marketing">Marketing</option><option value="Atención en Piso">Atención en Piso</option><option value="General">General</option></select></div>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
-            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Fecha Ingreso (DD/MM)</label><input type="text" id="usuario-fecha-ingreso" placeholder="DD/MM" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Fecha Ingreso (DD/MM/YYYY)</label><input type="text" id="usuario-fecha-ingreso" placeholder="DD/MM/YYYY" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Cumpleaños (DD/MM)</label><input type="text" id="usuario-cumpleaños" placeholder="DD/MM" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
           </div>
         </div>
@@ -330,8 +353,8 @@ function editarUsuario(id) {
     document.getElementById('usuario-telefono').value = usuario.teléfono;
     document.getElementById('usuario-rol').value = usuario.rol;
     document.getElementById('usuario-categoria').value = usuario.categoría || '';
-    document.getElementById('usuario-fecha-ingreso').value = usuario.fecha_ingreso || '';
-    document.getElementById('usuario-cumpleaños').value = usuario.cumpleaños || '';
+    document.getElementById('usuario-fecha-ingreso').value = formatearFecha(usuario.fecha_ingreso, 'DD/MM/YYYY');
+    document.getElementById('usuario-cumpleaños').value = formatearFecha(usuario.cumpleaños, 'DD/MM');
     document.getElementById('modal-usuario-title').textContent = '✏️ Editar Usuario';
     document.getElementById('modal-usuario').style.display = 'flex';
   }
