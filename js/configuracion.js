@@ -1,9 +1,10 @@
 let clienteActual = null;
 let usuariosEditando = [];
+let usuarioEditando = null;
 let modulosEditando = [];
 let wbrEditando = null;
-let editMode = { info: false, redes: false, sistemas: false };
 let contactoEditando = null;
+let editMode = { info: false, redes: false, sistemas: false };
 
 function loadConfiguracionModule() {
   console.log('🔧 loadConfiguracionModule EJECUTÁNDOSE');
@@ -33,8 +34,6 @@ function loadConfiguracionModule() {
       
       <div class="config-step active" id="step-1" data-step="1" style="display: block;">
         <h2>📋 Datos del Cliente</h2>
-        
-        <!-- INFORMACIÓN GENERAL EN DOS COLUMNAS -->
         <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>Información General</h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -43,16 +42,9 @@ function loadConfiguracionModule() {
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Sector</label><input type="text" id="cliente-sector" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Año de Fundación</label><input type="number" id="cliente-year" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
           </div>
-          <div style="margin-top: 20px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Página Web</label><input type="url" id="cliente-web" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-          </div>
-          <div style="margin-top: 20px;">
-            <button class="btn btn-primary" id="btn-editar-info" onclick="toggleEdit('info')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button>
-            <button class="btn btn-success" id="btn-guardar-info" onclick="guardarCliente('info')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
-          </div>
+          <div style="margin-top: 20px;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Página Web</label><input type="url" id="cliente-web" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+          <div style="margin-top: 20px;"><button class="btn btn-primary" id="btn-editar-info" onclick="toggleEdit('info')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button><button class="btn btn-success" id="btn-guardar-info" onclick="guardarCliente('info')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button></div>
         </div>
-
-        <!-- REDES SOCIALES EN DOS COLUMNAS -->
         <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>🔗 Redes Sociales</h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -61,32 +53,21 @@ function loadConfiguracionModule() {
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">LinkedIn</label><input type="text" id="cliente-linkedin" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">TikTok</label><input type="text" id="cliente-tiktok" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
           </div>
-          <div style="margin-top: 20px;">
-            <button class="btn btn-primary" id="btn-editar-redes" onclick="toggleEdit('redes')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button>
-            <button class="btn btn-success" id="btn-guardar-redes" onclick="guardarCliente('redes')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
-          </div>
+          <div style="margin-top: 20px;"><button class="btn btn-primary" id="btn-editar-redes" onclick="toggleEdit('redes')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button><button class="btn btn-success" id="btn-guardar-redes" onclick="guardarCliente('redes')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button></div>
         </div>
-
-        <!-- SISTEMAS EN DOS COLUMNAS -->
         <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>💻 Sistemas y Herramientas</h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">ERP</label><input type="text" id="cliente-erp" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">CRM</label><input type="text" id="cliente-crm" disabled style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
           </div>
-          <div style="margin-top: 20px;">
-            <button class="btn btn-primary" id="btn-editar-sistemas" onclick="toggleEdit('sistemas')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button>
-            <button class="btn btn-success" id="btn-guardar-sistemas" onclick="guardarCliente('sistemas')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
-          </div>
+          <div style="margin-top: 20px;"><button class="btn btn-primary" id="btn-editar-sistemas" onclick="toggleEdit('sistemas')" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Editar</button><button class="btn btn-success" id="btn-guardar-sistemas" onclick="guardarCliente('sistemas')" style="display:none; padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button></div>
         </div>
-
-        <!-- CONTACTOS -->
         <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3>👥 Contactos</h3>
           <div id="contactos-list" style="margin: 15px 0;"></div>
           <button class="btn btn-secondary" onclick="openModalContacto()" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">➕ Agregar Contacto</button>
         </div>
-
         <div style="margin: 40px 0; display: flex; justify-content: flex-end;">
           <button class="btn btn-next" onclick="goToStep(2)" style="padding: 12px 24px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Siguiente →</button>
         </div>
@@ -145,6 +126,28 @@ function loadConfiguracionModule() {
         </div>
       </div>
     </div>
+
+    <!-- MODAL: USUARIO -->
+    <div class="modal" id="modal-usuario" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+      <div class="modal-content" style="background: white; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 id="modal-usuario-title" style="margin: 0;">➕ Agregar Usuario</h2>
+          <button onclick="closeModal('usuario')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="usuario-id">
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre:*</label><input type="text" id="usuario-nombre" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Correo:*</label><input type="email" id="usuario-correo" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono:*</label><input type="tel" id="usuario-telefono" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Rol:*</label><select id="usuario-rol" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">Seleccionar...</option><option value="Dirección">Dirección</option><option value="Gerencia">Gerencia</option><option value="Vendedor">Vendedor</option><option value="Marketing">Marketing</option><option value="Atención a Clientes">Atención a Clientes</option></select></div>
+          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Categoría</label><select id="usuario-categoria" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">-</option><option value="Ruta">Ruta</option><option value="Comercial">Comercial</option><option value="Marketing">Marketing</option><option value="Atención en Piso">Atención en Piso</option><option value="General">General</option></select></div>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button onclick="guardarUsuario()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
+          <button onclick="closeModal('usuario')" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
+        </div>
+      </div>
+    </div>
   `;
   
   mainContent.innerHTML = html;
@@ -152,7 +155,14 @@ function loadConfiguracionModule() {
   setTimeout(() => { console.log('⏱️ Iniciando carga de datos...'); cargarConfiguracion(); }, 100);
 }
 
-async function cargarConfiguracion() { await cargarCliente(); await cargarContactos(); await cargarUsuarios(); await cargarModulos(); await cargarWbr(); console.log('✅ Todos los datos cargados'); }
+async function cargarConfiguracion() { 
+  await cargarCliente(); 
+  await cargarContactos(); 
+  await cargarUsuarios(); 
+  await cargarModulos(); 
+  await cargarWbr(); 
+  console.log('✅ Todos los datos cargados'); 
+}
 
 function goToStep(stepNum) { 
   document.querySelectorAll('.config-step').forEach(s => s.style.display = 'none'); 
@@ -163,13 +173,44 @@ function goToStep(stepNum) {
   if (bubble) bubble.style.background = '#4a90e2'; 
 }
 
-async function cargarCliente() { const res = await getClientes(); if (res.ok && res.data.length > 0) { clienteActual = res.data[0]; document.getElementById('cliente-nombre').value = clienteActual.nombre || ''; document.getElementById('cliente-direccion').value = clienteActual.dirección || ''; document.getElementById('cliente-sector').value = clienteActual.sector || ''; document.getElementById('cliente-year').value = clienteActual.año_fundación || ''; document.getElementById('cliente-web').value = clienteActual.página_web || ''; document.getElementById('cliente-instagram').value = clienteActual.instagram || ''; document.getElementById('cliente-facebook').value = clienteActual.facebook || ''; document.getElementById('cliente-linkedin').value = clienteActual.linkedin || ''; document.getElementById('cliente-tiktok').value = clienteActual.tiktok || ''; document.getElementById('cliente-erp').value = clienteActual.erp || ''; document.getElementById('cliente-crm').value = clienteActual.crm || ''; console.log('✅ Cliente cargado'); } }
+async function cargarCliente() { 
+  console.log('👤 cargarCliente'); 
+  const res = await getClientes(); 
+  if (res.ok && res.data.length > 0) { 
+    clienteActual = res.data[0]; 
+    document.getElementById('cliente-nombre').value = clienteActual.nombre || ''; 
+    document.getElementById('cliente-direccion').value = clienteActual.dirección || ''; 
+    document.getElementById('cliente-sector').value = clienteActual.sector || ''; 
+    document.getElementById('cliente-year').value = clienteActual.año_fundación || ''; 
+    document.getElementById('cliente-web').value = clienteActual.página_web || ''; 
+    document.getElementById('cliente-instagram').value = clienteActual.instagram || ''; 
+    document.getElementById('cliente-facebook').value = clienteActual.facebook || ''; 
+    document.getElementById('cliente-linkedin').value = clienteActual.linkedin || ''; 
+    document.getElementById('cliente-tiktok').value = clienteActual.tiktok || ''; 
+    document.getElementById('cliente-erp').value = clienteActual.erp || ''; 
+    document.getElementById('cliente-crm').value = clienteActual.crm || ''; 
+    console.log('✅ Cliente cargado'); 
+  } 
+}
 
-function toggleEdit(section) { editMode[section] = !editMode[section]; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = !editMode[section]; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); if (editMode[section]) { editBtn.style.display = 'none'; saveBtn.style.display = 'inline-block'; } else { editBtn.style.display = 'inline-block'; saveBtn.style.display = 'none'; } }
+function toggleEdit(section) { 
+  editMode[section] = !editMode[section]; 
+  const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; 
+  inputs.forEach(id => { document.querySelector(id).disabled = !editMode[section]; }); 
+  const editBtn = document.getElementById(`btn-editar-${section}`); 
+  const saveBtn = document.getElementById(`btn-guardar-${section}`); 
+  if (editMode[section]) { editBtn.style.display = 'none'; saveBtn.style.display = 'inline-block'; } else { editBtn.style.display = 'inline-block'; saveBtn.style.display = 'none'; } 
+}
 
-async function guardarCliente(section) { if (!clienteActual) return; const datos = { nombre: clienteActual.nombre, dirección: document.getElementById('cliente-direccion').value, sector: document.getElementById('cliente-sector').value, año_fundación: document.getElementById('cliente-year').value, página_web: document.getElementById('cliente-web').value, instagram: document.getElementById('cliente-instagram').value, facebook: document.getElementById('cliente-facebook').value, linkedin: document.getElementById('cliente-linkedin').value, tiktok: document.getElementById('cliente-tiktok').value, erp: document.getElementById('cliente-erp').value, crm: document.getElementById('cliente-crm').value }; const res = await updateCliente(datos); if (res.ok) { alert('✅ Guardado'); editMode[section] = false; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = true; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); editBtn.style.display = 'inline-block'; saveBtn.style.display = 'none'; cargarCliente(); } }
+async function guardarCliente(section) { 
+  if (!clienteActual) return; 
+  const datos = { nombre: clienteActual.nombre, dirección: document.getElementById('cliente-direccion').value, sector: document.getElementById('cliente-sector').value, año_fundación: document.getElementById('cliente-year').value, página_web: document.getElementById('cliente-web').value, instagram: document.getElementById('cliente-instagram').value, facebook: document.getElementById('cliente-facebook').value, linkedin: document.getElementById('cliente-linkedin').value, tiktok: document.getElementById('cliente-tiktok').value, erp: document.getElementById('cliente-erp').value, crm: document.getElementById('cliente-crm').value }; 
+  const res = await updateCliente(datos); 
+  if (res.ok) { alert('✅ Guardado'); editMode[section] = false; const inputs = section === 'info' ? ['#cliente-direccion', '#cliente-sector', '#cliente-year', '#cliente-web'] : section === 'redes' ? ['#cliente-instagram', '#cliente-facebook', '#cliente-linkedin', '#cliente-tiktok'] : ['#cliente-erp', '#cliente-crm']; inputs.forEach(id => { document.querySelector(id).disabled = true; }); const editBtn = document.getElementById(`btn-editar-${section}`); const saveBtn = document.getElementById(`btn-guardar-${section}`); editBtn.style.display = 'inline-block'; saveBtn.style.display = 'none'; cargarCliente(); } 
+}
 
 async function cargarContactos() { 
+  console.log('📧 cargarContactos'); 
   const res = await getContactos(); 
   if (res.ok) { 
     const lista = document.getElementById('contactos-list'); 
@@ -185,6 +226,7 @@ async function cargarContactos() {
         </div>
       </div>
     `).join(''); 
+    console.log('✅ Contactos:', res.data.length); 
   } 
 }
 
@@ -238,34 +280,108 @@ async function guardarContacto() {
   if (res.ok) { closeModal('contacto'); cargarContactos(); }
 }
 
-async function eliminarContacto(id) { if (confirm('¿Eliminar contacto?')) { await deleteContacto(id); cargarContactos(); } }
+async function eliminarContacto(id) { 
+  if (confirm('¿Eliminar contacto?')) { 
+    await deleteContacto(id); 
+    cargarContactos(); 
+  } 
+}
 
 function closeModal(name) { 
   const modal = document.getElementById(`modal-${name}`);
   if (modal) modal.style.display = 'none';
 }
 
-function openModalUsuario() { alert('Modal usuario - En construcción'); }
-async function guardarUsuario() { }
-async function guardarUsuarios() { alert('✅ Guardado'); }
+function openModalUsuario() {
+  usuarioEditando = null;
+  document.getElementById('usuario-id').value = '';
+  document.getElementById('usuario-nombre').value = '';
+  document.getElementById('usuario-correo').value = '';
+  document.getElementById('usuario-telefono').value = '';
+  document.getElementById('usuario-rol').value = '';
+  document.getElementById('usuario-categoria').value = '';
+  document.getElementById('modal-usuario-title').textContent = '➕ Agregar Usuario';
+  document.getElementById('modal-usuario').style.display = 'flex';
+}
+
+function editarUsuario(id) {
+  const usuario = usuariosEditando.find(u => u.id_usuario === id);
+  if (usuario) {
+    usuarioEditando = usuario;
+    document.getElementById('usuario-id').value = usuario.id_usuario;
+    document.getElementById('usuario-nombre').value = usuario.nombre;
+    document.getElementById('usuario-correo').value = usuario.correo;
+    document.getElementById('usuario-telefono').value = usuario.teléfono;
+    document.getElementById('usuario-rol').value = usuario.rol;
+    document.getElementById('usuario-categoria').value = usuario.categoría || '';
+    document.getElementById('modal-usuario-title').textContent = '✏️ Editar Usuario';
+    document.getElementById('modal-usuario').style.display = 'flex';
+  }
+}
+
+async function eliminarUsuario(id) {
+  if (confirm('¿Eliminar usuario?')) {
+    const res = await deleteUsuario(id);
+    if (res.ok) {
+      cargarUsuarios();
+    }
+  }
+}
+
+async function guardarUsuario() {
+  const id = document.getElementById('usuario-id').value;
+  const datos = {
+    id_usuario: id || 'U' + Date.now(),
+    nombre: document.getElementById('usuario-nombre').value,
+    correo: document.getElementById('usuario-correo').value,
+    teléfono: document.getElementById('usuario-telefono').value,
+    rol: document.getElementById('usuario-rol').value,
+    categoría: document.getElementById('usuario-categoria').value || '',
+    activo: 'Sí'
+  };
+  if (!datos.nombre || !datos.correo || !datos.teléfono || !datos.rol) {
+    alert('❌ Completa campos requeridos');
+    return;
+  }
+  let res;
+  if (id) {
+    res = await updateUsuario(datos);
+  } else {
+    res = await createUsuario(datos);
+  }
+  if (res.ok) {
+    closeModal('usuario');
+    cargarUsuarios();
+  }
+}
+
+async function guardarUsuarios() { 
+  alert('✅ Guardado'); 
+}
 
 async function cargarUsuarios() { 
+  console.log('👥 cargarUsuarios'); 
   const res = await getUsuarios(); 
   if (res.ok) { 
     usuariosEditando = res.data; 
     const lista = document.getElementById('usuarios-list');
     if (lista) { 
-      let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;"><th style="padding: 12px; text-align: left;">Nombre</th><th style="padding: 12px; text-align: left;">Rol</th><th style="padding: 12px; text-align: left;">Categoría</th></tr></thead><tbody>';
+      let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;"><th style="padding: 12px; text-align: left;">Nombre</th><th style="padding: 12px; text-align: left;">Rol</th><th style="padding: 12px; text-align: left;">Categoría</th><th style="padding: 12px; text-align: center;">Acciones</th></tr></thead><tbody>';
       res.data.forEach((u, idx) => {
-        html += `<tr style="border-bottom: 1px solid #eee; ${idx % 2 === 0 ? 'background: #f9f9f9;' : ''}"><td style="padding: 12px;">${u.nombre}</td><td style="padding: 12px;">${u.rol}</td><td style="padding: 12px;">${u.categoría || '-'}</td></tr>`;
+        const isAdmin = u.rol === 'SuperAdmin';
+        html += `<tr style="border-bottom: 1px solid #eee; ${idx % 2 === 0 ? 'background: #f9f9f9;' : ''}"><td style="padding: 12px;">${u.nombre}</td><td style="padding: 12px;">${u.rol}</td><td style="padding: 12px;">${u.categoría || '-'}</td><td style="padding: 12px; text-align: center;">
+          ${isAdmin ? '<span style="color: #999;">(SuperAdmin)</span>' : `<button onclick="editarUsuario('${u.id_usuario}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button><button onclick="eliminarUsuario('${u.id_usuario}')" style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Eliminar</button>`}
+        </td></tr>`;
       });
       html += '</tbody></table>';
       lista.innerHTML = html;
+      console.log('✅ Usuarios HTML inyectado'); 
     }
   } 
 }
 
 async function cargarModulos() { 
+  console.log('🎛️ cargarModulos'); 
   const res = await getModulos(); 
   if (res.ok) { 
     modulosEditando = res.data; 
@@ -276,14 +392,23 @@ async function cargarModulos() {
         html += `<div style="padding: 12px; border: 1px solid #eee; border-radius: 4px; margin: 8px 0; display: flex; align-items: center;"><input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 10px;"><label style="cursor: pointer; flex: 1;">${m.nombre_módulo}</label></div>`;
       });
       lista.innerHTML = html;
+      console.log('✅ Módulos HTML inyectado'); 
     }
   } 
 }
 
-function toggleModulo(id, checked) { const m = modulosEditando.find(x => x.id_módulo === id); if (m) m.activo = checked ? 'Sí' : 'No'; }
-async function guardarModulos() { for (const m of modulosEditando) await updateModulo(m); alert('✅ Guardado'); }
+function toggleModulo(id, checked) { 
+  const m = modulosEditando.find(x => x.id_módulo === id); 
+  if (m) m.activo = checked ? 'Sí' : 'No'; 
+}
+
+async function guardarModulos() { 
+  for (const m of modulosEditando) await updateModulo(m); 
+  alert('✅ Guardado'); 
+}
 
 async function cargarWbr() { 
+  console.log('📅 cargarWbr'); 
   const res = await getWbrConfig(); 
   if (res.ok) { 
     wbrEditando = res.data; 
@@ -294,8 +419,11 @@ async function cargarWbr() {
         html += `<div style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; background: #fafafa; display: flex; justify-content: space-between; align-items: center;"><div><h4 style="margin: 0 0 5px 0;">Paso ${p.paso}: ${p.nombre}</h4><p style="margin: 0; color: #666; font-size: 13px;">${p.descripción}</p></div><button onclick="alert('WBR config - En construcción')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer;">⚙️</button></div>`;
       });
       lista.innerHTML = html;
+      console.log('✅ WBR HTML inyectado'); 
     }
   } 
 }
 
-async function guardarWbr() { alert('✅ Guardado'); }
+async function guardarWbr() { 
+  alert('✅ Guardado'); 
+}
