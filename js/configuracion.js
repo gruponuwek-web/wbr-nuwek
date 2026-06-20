@@ -6,6 +6,14 @@ let wbrEditando = null;
 let contactoEditando = null;
 let editMode = { info: false, redes: false, sistemas: false };
 
+const modulosDescripciones = {
+  'Dashboard': 'Panel con KPIs y métricas principales del negocio',
+  'Pipeline': 'Gestión de oportunidades y etapas de venta',
+  'WBR': 'Weekly Business Review - Revisión semanal de resultados',
+  'Metas de Ventas': 'Seguimiento de objetivos y metas comerciales',
+  'Metas de Marketing': 'Seguimiento de objetivos de marketing y promociones'
+};
+
 function loadConfiguracionModule() {
   console.log('🔧 loadConfiguracionModule EJECUTÁNDOSE');
   const mainContent = document.getElementById('main-content');
@@ -389,7 +397,16 @@ async function cargarModulos() {
     if (lista) { 
       let html = '';
       res.data.forEach(m => {
-        html += `<div style="padding: 12px; border: 1px solid #eee; border-radius: 4px; margin: 8px 0; display: flex; align-items: center;"><input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 10px;"><label style="cursor: pointer; flex: 1;">${m.nombre_módulo}</label></div>`;
+        const descripcion = modulosDescripciones[m.nombre_módulo] || 'Módulo del sistema';
+        html += `<div style="padding: 15px; border: 1px solid #eee; border-radius: 4px; margin: 10px 0; background: #fafafa;">
+          <div style="display: flex; align-items: flex-start;">
+            <input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 12px; margin-top: 3px; cursor: pointer;">
+            <div style="flex: 1;">
+              <label style="cursor: pointer; font-weight: bold; display: block;">${m.nombre_módulo}</label>
+              <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${descripcion}</p>
+            </div>
+          </div>
+        </div>`;
       });
       lista.innerHTML = html;
       console.log('✅ Módulos HTML inyectado'); 
@@ -403,8 +420,13 @@ function toggleModulo(id, checked) {
 }
 
 async function guardarModulos() { 
-  for (const m of modulosEditando) await updateModulo(m); 
-  alert('✅ Guardado'); 
+  console.log('💾 Guardando módulos...');
+  for (const m of modulosEditando) {
+    const res = await updateModulo(m);
+    console.log(`✅ ${m.nombre_módulo} guardado`);
+  }
+  alert('✅ Módulos guardados correctamente');
+  await cargarModulos();
 }
 
 async function cargarWbr() { 
