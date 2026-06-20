@@ -147,8 +147,14 @@ function loadConfiguracionModule() {
           <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre:*</label><input type="text" id="usuario-nombre" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
           <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Correo:*</label><input type="email" id="usuario-correo" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
           <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono:*</label><input type="tel" id="usuario-telefono" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
-          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Rol:*</label><select id="usuario-rol" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">Seleccionar...</option><option value="Dirección">Dirección</option><option value="Gerencia">Gerencia</option><option value="Vendedor">Vendedor</option><option value="Marketing">Marketing</option><option value="Atención a Clientes">Atención a Clientes</option></select></div>
-          <div style="margin: 15px 0;"><label style="display: block; font-weight: bold; margin-bottom: 5px;">Categoría</label><select id="usuario-categoria" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">-</option><option value="Ruta">Ruta</option><option value="Comercial">Comercial</option><option value="Marketing">Marketing</option><option value="Atención en Piso">Atención en Piso</option><option value="General">General</option></select></div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Rol:*</label><select id="usuario-rol" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">Seleccionar...</option><option value="Dirección">Dirección</option><option value="Gerencia">Gerencia</option><option value="Vendedor">Vendedor</option><option value="Marketing">Marketing</option><option value="Atención a Clientes">Atención a Clientes</option></select></div>
+            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Categoría</label><select id="usuario-categoria" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">-</option><option value="Ruta">Ruta</option><option value="Comercial">Comercial</option><option value="Marketing">Marketing</option><option value="Atención en Piso">Atención en Piso</option><option value="General">General</option></select></div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Fecha Ingreso (DD/MM)</label><input type="text" id="usuario-fecha-ingreso" placeholder="DD/MM" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">Cumpleaños (DD/MM)</label><input type="text" id="usuario-cumpleaños" placeholder="DD/MM" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+          </div>
         </div>
         <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
           <button onclick="guardarUsuario()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Guardar</button>
@@ -308,6 +314,8 @@ function openModalUsuario() {
   document.getElementById('usuario-telefono').value = '';
   document.getElementById('usuario-rol').value = '';
   document.getElementById('usuario-categoria').value = '';
+  document.getElementById('usuario-fecha-ingreso').value = '';
+  document.getElementById('usuario-cumpleaños').value = '';
   document.getElementById('modal-usuario-title').textContent = '➕ Agregar Usuario';
   document.getElementById('modal-usuario').style.display = 'flex';
 }
@@ -322,6 +330,8 @@ function editarUsuario(id) {
     document.getElementById('usuario-telefono').value = usuario.teléfono;
     document.getElementById('usuario-rol').value = usuario.rol;
     document.getElementById('usuario-categoria').value = usuario.categoría || '';
+    document.getElementById('usuario-fecha-ingreso').value = usuario.fecha_ingreso || '';
+    document.getElementById('usuario-cumpleaños').value = usuario.cumpleaños || '';
     document.getElementById('modal-usuario-title').textContent = '✏️ Editar Usuario';
     document.getElementById('modal-usuario').style.display = 'flex';
   }
@@ -345,6 +355,8 @@ async function guardarUsuario() {
     teléfono: document.getElementById('usuario-telefono').value,
     rol: document.getElementById('usuario-rol').value,
     categoría: document.getElementById('usuario-categoria').value || '',
+    fecha_ingreso: document.getElementById('usuario-fecha-ingreso').value || '',
+    cumpleaños: document.getElementById('usuario-cumpleaños').value || '',
     activo: 'Sí'
   };
   if (!datos.nombre || !datos.correo || !datos.teléfono || !datos.rol) {
