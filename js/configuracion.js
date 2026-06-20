@@ -399,12 +399,15 @@ async function cargarModulos() {
       res.data.forEach(m => {
         const descripcion = modulosDescripciones[m.nombre_módulo] || 'Módulo del sistema';
         html += `<div style="padding: 15px; border: 1px solid #eee; border-radius: 4px; margin: 10px 0; background: #fafafa;">
-          <div style="display: flex; align-items: flex-start;">
-            <input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 12px; margin-top: 3px; cursor: pointer;">
-            <div style="flex: 1;">
-              <label style="cursor: pointer; font-weight: bold; display: block;">${m.nombre_módulo}</label>
-              <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${descripcion}</p>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+            <div style="display: flex; align-items: flex-start; flex: 1;">
+              <input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 12px; margin-top: 3px; cursor: pointer;">
+              <div style="flex: 1;">
+                <label style="cursor: pointer; font-weight: bold; display: block;">${m.nombre_módulo}</label>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${descripcion}</p>
+              </div>
             </div>
+            <button onclick="abrirConfiguracion('${m.nombre_módulo}')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; white-space: nowrap; margin-left: 10px;">⚙️ Configurar</button>
           </div>
         </div>`;
       });
@@ -453,4 +456,39 @@ async function cargarWbr() {
 
 async function guardarWbr() { 
   alert('✅ Guardado'); 
+}
+
+// ====== FUNCIÓN PARA ABRIR CONFIGURACIÓN DE MÓDULOS ======
+async function abrirConfiguracion(nombreModulo) {
+  console.log(`⚙️ abrirConfiguracion: ${nombreModulo}`);
+  
+  // Convertir nombre del módulo a nombre de archivo
+  const moduloFileName = nombreModulo.toLowerCase().replace(/\s+/g, '-');
+  const scriptUrl = `./js/config-modules/${moduloFileName}-config.js`;
+  
+  console.log(`📂 Cargando: ${scriptUrl}`);
+  
+  try {
+    // Crear y cargar el script dinámicamente
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.onload = async () => {
+      console.log(`✅ Script cargado: ${moduloFileName}-config.js`);
+      // Llamar a la función de carga del módulo
+      const functionName = `load${nombreModulo.replace(/\s+/g, '')}Config`;
+      if (typeof window[functionName] === 'function') {
+        window[functionName]();
+      } else {
+        console.warn(`⚠️ Función ${functionName} no encontrada`);
+      }
+    };
+    script.onerror = () => {
+      console.error(`❌ Error al cargar ${scriptUrl}`);
+      alert(`Error al cargar configuración de ${nombreModulo}`);
+    };
+    document.body.appendChild(script);
+  } catch (error) {
+    console.error('Error:', error);
+    alert(`Error al abrir configuración: ${error.message}`);
+  }
 }
