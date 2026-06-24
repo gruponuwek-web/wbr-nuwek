@@ -433,18 +433,38 @@ async function cargarModulos() {
       let html = '';
       res.data.forEach(m => {
         const descripcion = modulosDescripciones[m.nombre_módulo] || 'Módulo del sistema';
-        html += `<div style="padding: 15px; border: 1px solid #eee; border-radius: 4px; margin: 10px 0; background: #fafafa;">
-          <div style="display: flex; align-items: flex-start; justify-content: space-between;">
-            <div style="display: flex; align-items: flex-start; flex: 1;">
-              <input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 12px; margin-top: 3px; cursor: pointer;">
-              <div style="flex: 1;">
-                <label style="cursor: pointer; font-weight: bold; display: block;">${m.nombre_módulo}</label>
-                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${descripcion}</p>
+        const esObligatorio = m.nombre_módulo === 'Dashboard' || m.nombre_módulo === 'WBR';
+        
+        if (esObligatorio) {
+          // Módulos obligatorios: checkbox deshabilitado
+          html += `<div style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; background: #f0f8ff;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div style="display: flex; align-items: flex-start; flex: 1;">
+                <input type="checkbox" checked disabled style="margin-right: 12px; margin-top: 3px; cursor: not-allowed; opacity: 0.7;">
+                <div style="flex: 1;">
+                  <label style="font-weight: bold; display: block;">${m.nombre_módulo}</label>
+                  <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${descripcion}</p>
+                  <p style="margin: 8px 0 0 0; font-size: 11px; color: #999;">(Obligatorio)</p>
+                </div>
               </div>
+              <button onclick="abrirConfiguracion('${m.nombre_módulo}')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; white-space: nowrap; margin-left: 10px;">⚙️ Configurar</button>
             </div>
-            <button onclick="abrirConfiguracion('${m.nombre_módulo}')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; white-space: nowrap; margin-left: 10px;">⚙️ Configurar</button>
-          </div>
-        </div>`;
+          </div>`;
+        } else {
+          // Módulos opcionales: checkbox habilitado
+          html += `<div style="padding: 15px; border: 1px solid #eee; border-radius: 4px; margin: 10px 0; background: #fafafa;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+              <div style="display: flex; align-items: flex-start; flex: 1;">
+                <input type="checkbox" ${m.activo === 'Sí' ? 'checked' : ''} onchange="toggleModulo('${m.id_módulo}', this.checked)" style="margin-right: 12px; margin-top: 3px; cursor: pointer;">
+                <div style="flex: 1;">
+                  <label style="cursor: pointer; font-weight: bold; display: block;">${m.nombre_módulo}</label>
+                  <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">${descripcion}</p>
+                </div>
+              </div>
+              <button onclick="abrirConfiguracion('${m.nombre_módulo}')" style="padding: 8px 16px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; white-space: nowrap; margin-left: 10px;">⚙️ Configurar</button>
+            </div>
+          </div>`;
+        }
       });
       lista.innerHTML = html;
       console.log('✅ Módulos HTML inyectado'); 
@@ -460,6 +480,10 @@ function toggleModulo(id, checked) {
 async function guardarModulos() { 
   console.log('💾 Guardando módulos...');
   for (const m of modulosEditando) {
+    // Asegurar que Dashboard y WBR siempre sean 'Sí'
+    if (m.nombre_módulo === 'Dashboard' || m.nombre_módulo === 'WBR') {
+      m.activo = 'Sí';
+    }
     const res = await updateModulo(m);
     console.log(`✅ ${m.nombre_módulo} guardado`);
   }
