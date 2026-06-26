@@ -212,7 +212,138 @@ function renderVistaPorLista(contenedor) {
 
 function renderVistaPorSemana(contenedor) {
   console.log('📅 Vista Semana');
-  contenedor.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Vista Semana - En construcción 🚀</p>';
+  
+  // Calcular inicio de semana (lunes)
+  const inicio = new Date(fechaNavegacion);
+  const diferencia = inicio.getDay() === 0 ? -6 : 1 - inicio.getDay(); // Lunes = 1
+  inicio.setDate(inicio.getDate() + diferencia);
+  
+  // Generar array de 7 días
+  const dias = [];
+  const nombresMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  const nombresDias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(inicio);
+    d.setDate(d.getDate() + i);
+    dias.push({
+      fecha: d,
+      numero: d.getDate(),
+      nombre: nombresDias[i],
+      mes: nombresMeses[d.getMonth()],
+      año: d.getFullYear(),
+      fechaISO: d.toISOString().split('T')[0]
+    });
+  }
+  
+  const mesActual = dias[0].mes + ' ' + dias[0].año;
+  
+  // Filtrar acciones de esta semana
+  const accionesDelaSemana = accionesData.filter(a => {
+    const fechaAccion = a.fecha_compromiso.split('T')[0];
+    return fechaAccion >= dias[0].fechaISO && fechaAccion <= dias[6].fechaISO;
+  });
+  
+  // Generar tabla de la semana
+  let tablaHTML = `
+    <div style="margin-bottom: 30px;">
+      <h3 style="text-align: center; color: #333; margin-bottom: 15px;">Semana de ${mesActual}</h3>
+      <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+  `;
+  
+  dias.forEach(d => {
+    const esFinDeSemana = d.nombre === 'Sábado' || d.nombre === 'Domingo';
+    const colorFondo = esFinDeSemana ? '#f0f0f0' : 'white';
+    const colorTexto = esFinDeSemana ? '#999' : '#333';
+    tablaHTML += `
+      <th style="padding: 15px; text-align: center; border-right: 1px solid #ddd; background: ${colorFondo}; color: ${colorTexto}; font-weight: bold;">
+        <div style="font-size: 14px;">${d.nombre}</div>
+        <div style="font-size: 18px; font-weight: bold; margin: 5px 0;">${d.numero}</div>
+        <div style="font-size: 12px; color: #999;">${d.mes.substring(0, 3)}</div>
+      </th>
+    `;
+  });
+  
+  tablaHTML += `
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+  `;
+  
+  dias.forEach(d => {
+    const esFinDeSemana = d.nombre === 'Sábado' || d.nombre === 'Domingo';
+    const colorFondo = esFinDeSemana ? '#f9f9f9' : 'white';
+    const accionesDia = accionesDelaSemana.filter(a => a.fecha_compromiso.split('T')[0] === d.fechaISO);
+    
+    tablaHTML += `
+      <td style="padding: 15px; border-right: 1px solid #ddd; background: ${colorFondo}; vertical-align: top; height: 150px; position: relative;">
+        <div style="font-size: 12px; color: #666;">
+          ${accionesDia.length > 0 ? accionesDia.length + ' acción' + (accionesDia.length > 1 ? 'es' : '') : 'Sin acciones'}
+        </div>
+      </td>
+    `;
+  });
+  
+  tablaHTML += `
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+  
+  // Lista de acciones de la semana
+  let listaHTML = `
+    <div style="margin-top: 30px;">
+      <h3 style="color: #333; margin-bottom: 15px;">Acciones de esta semana (${accionesDelaSemana.length})</h3>
+  `;
+  
+  if (accionesDelaSemana.length === 0) {
+    listaHTML += '<p style="color: #999; padding: 20px; text-align: center;">No hay acciones esta semana</p>';
+  } else {
+    listaHTML += `
+      <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #ddd; border-radius: 8px;">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Fecha</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Tipo</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Cliente</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Prioridad</th>
+            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Estado</th>
+            <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    accionesDelaSemana.forEach(a => {
+      const colorPrioridad = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
+      listaHTML += `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 12px;">${formatearFechaTabla(a.fecha_compromiso)}</td>
+          <td style="padding: 12px;">${a.tipo_accion || '-'}</td>
+          <td style="padding: 12px;">${a.cliente || '-'}</td>
+          <td style="padding: 12px;"><span style="background: ${colorPrioridad}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.prioridad}</span></td>
+          <td style="padding: 12px;">${a.estado || 'Pendiente'}</td>
+          <td style="padding: 12px; text-align: center;">
+            <button onclick="editarAccion('${a.id_accion}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button>
+            <button onclick="marcarConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
+          </td>
+        </tr>
+      `;
+    });
+    
+    listaHTML += `
+        </tbody>
+      </table>
+    `;
+  }
+  
+  listaHTML += '</div>';
+  
+  contenedor.innerHTML = tablaHTML + listaHTML;
 }
 
 function renderVistaPorMes(contenedor) {
