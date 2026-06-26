@@ -2,6 +2,111 @@
 let accionesData = [];
 let vistaActual = 'lista'; // lista, semana, mes
 let fechaNavegacion = new Date();
+let accionEditandoID = null; // Para saber qué acción se está concluyendo
+
+// Inyectar modal HTML
+function inyectarModalConcluida() {
+  if (document.getElementById('modal-concluida')) return; // Ya existe
+  
+  const modalHTML = `
+    <div id="modal-concluida" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+      <div style="background: white; border-radius: 12px; padding: 30px; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.2);">
+        <h2 style="margin: 0 0 20px; text-align: center; color: #333;">Marcar Acción como Concluida</h2>
+        
+        <div style="text-align: center; margin: 20px 0; font-size: 14px; color: #666;">
+          ¿Qué deseas hacer?
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button onclick="concluirAccion(1)" style="
+            padding: 14px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='#229954'" onmouseout="this.style.background='#27ae60'">
+            ✅ Marcar como Concluida
+          </button>
+          
+          <button onclick="concluirAccion(2)" style="
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='#2980b9'" onmouseout="this.style.background='#3498db'">
+            ⏭️ Concluida + Crear Nueva
+          </button>
+          
+          <button onclick="cerrarModalConcluida()" style="
+            padding: 14px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">
+            ❌ Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function abrirModalConcluida(accionId) {
+  accionEditandoID = accionId;
+  const modal = document.getElementById('modal-concluida');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+}
+
+function cerrarModalConcluida() {
+  const modal = document.getElementById('modal-concluida');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+  accionEditandoID = null;
+}
+
+async function concluirAccion(opcion) {
+  if (!accionEditandoID) return;
+  
+  const accion = accionesData.find(a => a.id_accion === accionEditandoID);
+  if (!accion) return;
+  
+  // Actualizar estado
+  accion.estado = 'Concluida';
+  const res = await updateAccion(accion);
+  
+  if (res.ok) {
+    cerrarModalConcluida();
+    
+    if (opcion === 2) {
+      // Opción 2: Crear nueva acción
+      abrirModalAccion();
+    } else {
+      // Opción 1: Solo concluir
+      cargarAcciones();
+    }
+  } else {
+    alert('❌ Error al concluir la acción');
+  }
+}
 
 // ====== HELPERS ======
 function formatearFechaTabla(fechaISO) {
@@ -201,7 +306,7 @@ function renderVistaPorLista(contenedor) {
       <td style="padding: 12px;">${a.estado || 'Pendiente'}</td>
       <td style="padding: 12px; text-align: center;">
         <button onclick="editarAccion('${a.id_accion}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button>
-        <button onclick="marcarConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
+        <button onclick="abrirModalConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
       </td>
     </tr>`;
   });
@@ -346,7 +451,7 @@ function renderVistaPorSemana(contenedor) {
                 font-size: 11px;
                 font-weight: bold;
               ">✏️</button>
-              <button onclick="marcarConcluida('${a.id_accion}')" style="
+              <button onclick="abrirModalConcluida('${a.id_accion}')" style="
                 flex: 1;
                 padding: 5px 6px;
                 background: #27ae60;
@@ -404,46 +509,39 @@ function renderVistaPorSemana(contenedor) {
   if (accionesVencidas.length > 0) {
     listaHTML += `
       <div style="margin-bottom: 20px;">
-        <h3 style="color: #e74c3c; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e74c3c;">🚨 Acciones Vencidas (${accionesVencidas.length})</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+        <h3 style="color: #e74c3c; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e74c3c;">🚨 Acciones Vencidas (${accionesVencidas.length})</h3>
+        <table style="width: 100%; border-collapse: collapse; background: #fff5f5; border: 1px solid #e74c3c;">
+          <thead>
+            <tr style="background: #fce8e8;">
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Fecha</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Tipo</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Cliente</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Prioridad</th>
+              <th style="padding: 12px; text-align: center; border-bottom: 2px solid #e74c3c;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
     
     accionesVencidas.forEach(a => {
       const colorPrioridad = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
-      const icono = getIconoTipo(a.tipo_accion);
       listaHTML += `
-        <div style="
-          background: #fff5f5;
-          border: 1px solid #e74c3c;
-          border-radius: 8px;
-          padding: 12px;
-        ">
-          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-            <div>
-              <div style="font-size: 14px; font-weight: bold; color: #e74c3c;">
-                ${icono} ${a.tipo_accion}
-              </div>
-              <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                👤 ${a.vendedor || 'N/A'}
-              </div>
-            </div>
-            <span style="background: ${colorPrioridad}; color: white; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">
-              ${a.prioridad}
-            </span>
-          </div>
-          <div style="font-size: 12px; color: #999; margin-bottom: 10px;">
-            📅 ${formatearFechaTabla(a.fecha_compromiso)} | 🎯 ${a.cliente || '-'}
-          </div>
-          <div style="display: flex; gap: 6px;">
-            <button onclick="editarAccion('${a.id_accion}')" style="flex: 1; padding: 6px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✏️ Editar</button>
-            <button onclick="marcarConcluida('${a.id_accion}')" style="flex: 1; padding: 6px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
-          </div>
-        </div>
+        <tr style="border-bottom: 1px solid #ffe0e0;">
+          <td style="padding: 12px; color: #e74c3c; font-weight: bold;">${formatearFechaTabla(a.fecha_compromiso)}</td>
+          <td style="padding: 12px;">${a.tipo_accion || '-'}</td>
+          <td style="padding: 12px;">${a.cliente || '-'}</td>
+          <td style="padding: 12px;"><span style="background: ${colorPrioridad}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.prioridad}</span></td>
+          <td style="padding: 12px; text-align: center;">
+            <button onclick="editarAccion('${a.id_accion}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button>
+            <button onclick="abrirModalConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
+          </td>
+        </tr>
       `;
     });
     
     listaHTML += `
-        </div>
+          </tbody>
+        </table>
       </div>
     `;
   }
@@ -452,46 +550,39 @@ function renderVistaPorSemana(contenedor) {
   if (accionesActivas.length > 0) {
     listaHTML += `
       <div>
-        <h3 style="color: #27ae60; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #27ae60;">✓ Acciones Activas (${accionesActivas.length})</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+        <h3 style="color: #27ae60; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #27ae60;">✓ Acciones Activas (${accionesActivas.length})</h3>
+        <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #ddd;">
+          <thead>
+            <tr style="background: #f5f5f5;">
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Fecha</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Tipo</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Cliente</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Prioridad</th>
+              <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
     
     accionesActivas.forEach(a => {
       const colorPrioridad = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
-      const icono = getIconoTipo(a.tipo_accion);
       listaHTML += `
-        <div style="
-          background: #ffffff;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          padding: 12px;
-        ">
-          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-            <div>
-              <div style="font-size: 14px; font-weight: bold; color: #333;">
-                ${icono} ${a.tipo_accion}
-              </div>
-              <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                👤 ${a.vendedor || 'N/A'}
-              </div>
-            </div>
-            <span style="background: ${colorPrioridad}; color: white; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">
-              ${a.prioridad}
-            </span>
-          </div>
-          <div style="font-size: 12px; color: #999; margin-bottom: 10px;">
-            📅 ${formatearFechaTabla(a.fecha_compromiso)} | 🎯 ${a.cliente || '-'}
-          </div>
-          <div style="display: flex; gap: 6px;">
-            <button onclick="editarAccion('${a.id_accion}')" style="flex: 1; padding: 6px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✏️ Editar</button>
-            <button onclick="marcarConcluida('${a.id_accion}')" style="flex: 1; padding: 6px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
-          </div>
-        </div>
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 12px;">${formatearFechaTabla(a.fecha_compromiso)}</td>
+          <td style="padding: 12px;">${a.tipo_accion || '-'}</td>
+          <td style="padding: 12px;">${a.cliente || '-'}</td>
+          <td style="padding: 12px;"><span style="background: ${colorPrioridad}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.prioridad}</span></td>
+          <td style="padding: 12px; text-align: center;">
+            <button onclick="editarAccion('${a.id_accion}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button>
+            <button onclick="abrirModalConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
+          </td>
+        </tr>
       `;
     });
     
     listaHTML += `
-        </div>
+          </tbody>
+        </table>
       </div>
     `;
   }
@@ -608,22 +699,12 @@ async function guardarAccion() {
   }
 }
 
-async function marcarConcluida(id) {
-  const accion = accionesData.find(a => a.id_accion === id);
-  if (!accion) return;
-  
-  // Modal con 3 opciones
-  const opcion = prompt('¿Qué deseas hacer?\n1. Marcar como Concluida\n2. Marcar como Concluida y crear nueva\n0. Cancelar');
-  
-  if (opcion === '1') {
-    accion.estado = 'Concluida';
-    await updateAccion(accion);
-    cargarAcciones();
-  } else if (opcion === '2') {
-    accion.estado = 'Concluida';
-    await updateAccion(accion);
-    setTimeout(() => openModalAccion(), 500);
-    cargarAcciones();
+async function abrirModalConcluida(id) {
+  accionEditandoID = id;
+  inyectarModalConcluida();
+  const modal = document.getElementById('modal-concluida');
+  if (modal) {
+    modal.style.display = 'flex';
   }
 }
 
