@@ -63,7 +63,7 @@ function loadAccionesModule() {
           
           <!-- Fila 4: Cliente y Acompañamiento -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">CLIENTE:*</label><input type="text" id="accion-cliente" placeholder="Nombre del cliente" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
+            <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">CLIENTE</label><input type="text" id="accion-cliente" placeholder="Nombre del cliente" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"></div>
             <div><label style="display: block; font-weight: bold; margin-bottom: 5px;">ACOMPAÑAMIENTO</label><select id="accion-acompañamiento" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;"><option value="">Seleccionar...</option><option value="No aplica">No aplica</option></select></div>
           </div>
           
@@ -95,11 +95,14 @@ function loadAccionesModule() {
 async function cargarAcciones() {
   console.log('📋 Cargando acciones...');
   const res = await getAcciones();
+  console.log('📡 Respuesta getAcciones:', res);
   if (res.ok) {
     accionesData = res.data;
+    console.log('✅ Acciones cargadas:', accionesData.length);
     cargarVendedoresYAcompañamiento();
     renderizarVista();
-    console.log('✅ Acciones cargadas:', accionesData.length);
+  } else {
+    console.error('❌ Error cargando acciones:', res.error);
   }
 }
 
@@ -112,17 +115,19 @@ function cargarVendedoresYAcompañamiento() {
       
       if (selectVendedor) {
         selectVendedor.innerHTML = '<option value="">Seleccionar vendedor...</option>';
-        res.data.forEach(u => {
+        // Filtrar solo usuarios con rol "Vendedor"
+        res.data.filter(u => u.rol === 'Vendedor').forEach(u => {
           const option = document.createElement('option');
           option.value = u.nombre;
-          option.textContent = u.nombre;
+          option.textContent = u.nombre + ' (' + (u.categoría || '-') + ')';
           selectVendedor.appendChild(option);
         });
       }
       
       if (selectAcompañamiento) {
         selectAcompañamiento.innerHTML = '<option value="">Seleccionar...</option><option value="No aplica">No aplica</option>';
-        res.data.forEach(u => {
+        // Excluir SuperAdmin
+        res.data.filter(u => u.rol !== 'SuperAdmin').forEach(u => {
           const option = document.createElement('option');
           option.value = u.nombre + ' (' + u.rol + ')';
           option.textContent = u.nombre + ' (' + u.rol + ')';
@@ -263,7 +268,7 @@ async function guardarAccion() {
     clasificacion: document.getElementById('accion-clasificacion').value,
     prioridad: document.getElementById('accion-prioridad').value,
     resultado_esperado: document.getElementById('accion-resultado').value,
-    cliente: document.getElementById('accion-cliente').value,
+    cliente: document.getElementById('accion-cliente').value || '',
     acompañamiento: document.getElementById('accion-acompañamiento').value || '',
     proveedor_externo: document.getElementById('accion-proveedor').value || '',
     fecha_compromiso: document.getElementById('accion-fecha').value,
@@ -271,21 +276,31 @@ async function guardarAccion() {
     estado: 'Pendiente'
   };
   
-  if (!datos.tipo_accion || !datos.clasificacion || !datos.prioridad || !datos.resultado_esperado || !datos.cliente || !datos.fecha_compromiso) {
+  console.log('💾 Datos a guardar:', datos);
+  
+  // Validación: Cliente NO es obligatorio
+  if (!datos.tipo_accion || !datos.clasificacion || !datos.prioridad || !datos.resultado_esperado || !datos.fecha_compromiso) {
     alert('❌ Completa campos requeridos (marcados con *)');
     return;
   }
   
   let res;
   if (id) {
+    console.log('✏️ Actualizando acción...');
     res = await updateAccion(datos);
   } else {
+    console.log('✨ Creando acción nueva...');
     res = await createAccion(datos);
   }
   
+  console.log('📡 Respuesta del servidor:', res);
+  
   if (res.ok) {
+    alert('✅ Acción guardada');
     closeModal('accion');
     cargarAcciones();
+  } else {
+    alert('❌ Error: ' + (res.error || 'Error desconocido'));
   }
 }
 
