@@ -215,7 +215,7 @@ function renderVistaPorSemana(contenedor) {
   
   // Calcular inicio de semana (lunes)
   const inicio = new Date(fechaNavegacion);
-  const diferencia = inicio.getDay() === 0 ? -6 : 1 - inicio.getDay(); // Lunes = 1
+  const diferencia = inicio.getDay() === 0 ? -6 : 1 - inicio.getDay();
   inicio.setDate(inicio.getDate() + diferencia);
   
   // Generar array de 7 días
@@ -237,6 +237,15 @@ function renderVistaPorSemana(contenedor) {
   }
   
   const mesActual = dias[0].mes + ' ' + dias[0].año;
+  
+  // Helper: verificar si acción está vencida
+  function estaVencida(fechaAccion) {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const fecha = new Date(fechaAccion);
+    fecha.setHours(0, 0, 0, 0);
+    return fecha < hoy;
+  }
   
   // Filtrar acciones de esta semana
   const accionesDelaSemana = accionesData.filter(a => {
@@ -278,11 +287,34 @@ function renderVistaPorSemana(contenedor) {
     const colorFondo = esFinDeSemana ? '#f9f9f9' : 'white';
     const accionesDia = accionesDelaSemana.filter(a => a.fecha_compromiso.split('T')[0] === d.fechaISO);
     
+    let contenidoDia = '';
+    if (accionesDia.length === 0) {
+      contenidoDia = '<div style="font-size: 12px; color: #bbb; text-align: center; padding: 30px 5px;">Sin acciones</div>';
+    } else {
+      accionesDia.forEach(a => {
+        const vencida = estaVencida(a.fecha_compromiso);
+        const colorPrioridad = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
+        const badge = vencida ? '🚨' : '✓';
+        const colorBadge = vencida ? '#e74c3c' : '#95a5a6';
+        
+        contenidoDia += `
+          <div style="padding: 8px; margin: 4px 0; background: ${vencida ? '#fce8e8' : '#f9f9f9'}; border-radius: 4px; border-left: 3px solid ${colorBadge}; font-size: 11px;">
+            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
+              <span style="font-size: 10px;">${badge}</span>
+              <strong style="font-size: 10px; color: #333;">${a.tipo_accion || '-'}</strong>
+            </div>
+            <div style="color: #666; font-size: 10px; margin: 2px 0;">👤 ${a.vendedor || 'N/A'}</div>
+            <div style="display: inline-block; background: ${colorPrioridad}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: bold;">
+              ${a.prioridad}
+            </div>
+          </div>
+        `;
+      });
+    }
+    
     tablaHTML += `
-      <td style="padding: 15px; border-right: 1px solid #ddd; background: ${colorFondo}; vertical-align: top; height: 150px; position: relative;">
-        <div style="font-size: 12px; color: #666;">
-          ${accionesDia.length > 0 ? accionesDia.length + ' acción' + (accionesDia.length > 1 ? 'es' : '') : 'Sin acciones'}
-        </div>
+      <td style="padding: 8px; border-right: 1px solid #ddd; background: ${colorFondo}; vertical-align: top; height: 200px; overflow-y: auto; position: relative;">
+        ${contenidoDia}
       </td>
     `;
   });
@@ -294,39 +326,41 @@ function renderVistaPorSemana(contenedor) {
     </div>
   `;
   
+  // Separar acciones vencidas y activas
+  const accionesVencidas = accionesDelaSemana.filter(a => estaVencida(a.fecha_compromiso));
+  const accionesActivas = accionesDelaSemana.filter(a => !estaVencida(a.fecha_compromiso));
+  
   // Lista de acciones de la semana
   let listaHTML = `
     <div style="margin-top: 30px;">
-      <h3 style="color: #333; margin-bottom: 15px;">Acciones de esta semana (${accionesDelaSemana.length})</h3>
   `;
   
-  if (accionesDelaSemana.length === 0) {
-    listaHTML += '<p style="color: #999; padding: 20px; text-align: center;">No hay acciones esta semana</p>';
-  } else {
+  // VENCIDAS
+  if (accionesVencidas.length > 0) {
     listaHTML += `
-      <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #ddd; border-radius: 8px;">
-        <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Fecha</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Tipo</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Cliente</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Prioridad</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Estado</th>
-            <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div style="margin-bottom: 20px;">
+        <h3 style="color: #e74c3c; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e74c3c;">🚨 Acciones Vencidas (${accionesVencidas.length})</h3>
+        <table style="width: 100%; border-collapse: collapse; background: #fff5f5; border: 1px solid #e74c3c;">
+          <thead>
+            <tr style="background: #fce8e8;">
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Fecha</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Tipo</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Cliente</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e74c3c;">Prioridad</th>
+              <th style="padding: 12px; text-align: center; border-bottom: 2px solid #e74c3c;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
     
-    accionesDelaSemana.forEach(a => {
+    accionesVencidas.forEach(a => {
       const colorPrioridad = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
       listaHTML += `
-        <tr style="border-bottom: 1px solid #eee;">
-          <td style="padding: 12px;">${formatearFechaTabla(a.fecha_compromiso)}</td>
+        <tr style="border-bottom: 1px solid #ffe0e0;">
+          <td style="padding: 12px; color: #e74c3c; font-weight: bold;">${formatearFechaTabla(a.fecha_compromiso)}</td>
           <td style="padding: 12px;">${a.tipo_accion || '-'}</td>
           <td style="padding: 12px;">${a.cliente || '-'}</td>
           <td style="padding: 12px;"><span style="background: ${colorPrioridad}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.prioridad}</span></td>
-          <td style="padding: 12px;">${a.estado || 'Pendiente'}</td>
           <td style="padding: 12px; text-align: center;">
             <button onclick="editarAccion('${a.id_accion}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button>
             <button onclick="marcarConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
@@ -336,9 +370,55 @@ function renderVistaPorSemana(contenedor) {
     });
     
     listaHTML += `
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     `;
+  }
+  
+  // ACTIVAS
+  if (accionesActivas.length > 0) {
+    listaHTML += `
+      <div>
+        <h3 style="color: #27ae60; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #27ae60;">✓ Acciones Activas (${accionesActivas.length})</h3>
+        <table style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #ddd;">
+          <thead>
+            <tr style="background: #f5f5f5;">
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Fecha</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Tipo</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Cliente</th>
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Prioridad</th>
+              <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    
+    accionesActivas.forEach(a => {
+      const colorPrioridad = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
+      listaHTML += `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 12px;">${formatearFechaTabla(a.fecha_compromiso)}</td>
+          <td style="padding: 12px;">${a.tipo_accion || '-'}</td>
+          <td style="padding: 12px;">${a.cliente || '-'}</td>
+          <td style="padding: 12px;"><span style="background: ${colorPrioridad}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.prioridad}</span></td>
+          <td style="padding: 12px; text-align: center;">
+            <button onclick="editarAccion('${a.id_accion}')" style="padding: 6px 12px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">✏️ Editar</button>
+            <button onclick="marcarConcluida('${a.id_accion}')" style="padding: 6px 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✅ Concluida</button>
+          </td>
+        </tr>
+      `;
+    });
+    
+    listaHTML += `
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+  
+  if (accionesVencidas.length === 0 && accionesActivas.length === 0) {
+    listaHTML += '<p style="color: #999; padding: 20px; text-align: center;">No hay acciones esta semana</p>';
   }
   
   listaHTML += '</div>';
