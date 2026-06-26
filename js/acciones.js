@@ -3,6 +3,20 @@ let accionesData = [];
 let vistaActual = 'lista'; // lista, semana, mes
 let fechaNavegacion = new Date();
 
+// ====== HELPERS ======
+function formatearFechaTabla(fechaISO) {
+  if (!fechaISO) return '-';
+  try {
+    const fecha = new Date(fechaISO);
+    const dia = String(fecha.getUTCDate()).padStart(2, '0');
+    const mes = String(fecha.getUTCMonth() + 1).padStart(2, '0');
+    const año = fecha.getUTCFullYear();
+    return `${dia}/${mes}/${año}`;
+  } catch (e) {
+    return fechaISO;
+  }
+}
+
 function loadAccionesModule() {
   console.log('✏️ loadAccionesModule() ejecutando...');
   
@@ -180,7 +194,7 @@ function renderVistaPorLista(contenedor) {
   accionesOrdadas.forEach((a, idx) => {
     const prioridadColor = a.prioridad === 'Alta' ? '#e74c3c' : a.prioridad === 'Media' ? '#f39c12' : '#27ae60';
     html += `<tr style="border-bottom: 1px solid #eee; ${idx % 2 === 0 ? 'background: #f9f9f9;' : ''}">
-      <td style="padding: 12px;">${a.fecha_compromiso}</td>
+      <td style="padding: 12px;">${formatearFechaTabla(a.fecha_compromiso)}</td>
       <td style="padding: 12px;">${a.tipo_accion}</td>
       <td style="padding: 12px;">${a.cliente}</td>
       <td style="padding: 12px;"><span style="background: ${prioridadColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${a.prioridad}</span></td>

@@ -251,6 +251,10 @@ async function cargarContactos() {
   const res = await getContactos(); 
   if (res.ok) { 
     const lista = document.getElementById('contactos-list'); 
+    if (!lista) {
+      console.warn('⚠️ contactos-list no encontrado en el DOM');
+      return;
+    }
     lista.innerHTML = res.data.map(c => `
       <div style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; margin: 8px 0; background: #fafafa; display: flex; justify-content: space-between; align-items: center;">
         <div>
