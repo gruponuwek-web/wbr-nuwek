@@ -116,7 +116,7 @@ async function concluirAccion(opcion) {
     if (opcion === 2) {
       // Opción 2: Crear nueva acción
       console.log('⏭️ Abriendo modal nueva acción');
-      abrirModalAccion();
+      openModalAccion(); // Llamar a la función correcta
     } else {
       // Opción 1: Solo concluir
       console.log('🔄 Recargando acciones');
