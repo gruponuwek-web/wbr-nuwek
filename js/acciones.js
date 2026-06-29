@@ -389,7 +389,9 @@ function renderVistaPorSemana(contenedor) {
   // Filtrar acciones de esta semana
   const accionesDelaSemana = accionesData.filter(a => {
     const fechaAccion = a.fecha_compromiso.split('T')[0];
-    return fechaAccion >= dias[0].fechaISO && fechaAccion <= dias[6].fechaISO;
+    const esDeLaSemana = fechaAccion >= dias[0].fechaISO && fechaAccion <= dias[6].fechaISO;
+    const noEsConcluida = a.estado !== 'Concluida'; // Excluir acciones concluidas
+    return esDeLaSemana && noEsConcluida;
   });
   
   // Generar vista Kanban
