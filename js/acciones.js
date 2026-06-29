@@ -120,7 +120,7 @@ async function concluirAccion(opcion) {
     } else {
       // Opción 1: Solo concluir
       console.log('🔄 Recargando acciones');
-      cargarAcciones();
+      await cargarAcciones(); // Esperar a que cargue antes de continuar
     }
   } else {
     console.error('❌ Error en updateAccion:', res.error);
