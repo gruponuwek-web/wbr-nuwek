@@ -68,10 +68,14 @@ function inyectarModalConcluida() {
 }
 
 function abrirModalConcluida(accionId) {
+  console.log('🎯 abrirModalConcluida:', accionId);
   accionEditandoID = accionId;
+  inyectarModalConcluida(); // Asegurar que el modal existe
   const modal = document.getElementById('modal-concluida');
   if (modal) {
     modal.style.display = 'flex';
+  } else {
+    console.error('❌ Modal no encontrado');
   }
 }
 
@@ -84,27 +88,43 @@ function cerrarModalConcluida() {
 }
 
 async function concluirAccion(opcion) {
-  if (!accionEditandoID) return;
+  console.log('✅ concluirAccion:', opcion, 'ID:', accionEditandoID);
+  
+  if (!accionEditandoID) {
+    console.error('❌ No hay accionEditandoID');
+    return;
+  }
   
   const accion = accionesData.find(a => a.id_accion === accionEditandoID);
-  if (!accion) return;
+  if (!accion) {
+    console.error('❌ Acción no encontrada:', accionEditandoID);
+    return;
+  }
+  
+  console.log('📝 Acción encontrada:', accion);
   
   // Actualizar estado
   accion.estado = 'Concluida';
+  console.log('📤 Enviando updateAccion:', accion);
+  
   const res = await updateAccion(accion);
+  console.log('📥 Respuesta updateAccion:', res);
   
   if (res.ok) {
     cerrarModalConcluida();
     
     if (opcion === 2) {
       // Opción 2: Crear nueva acción
+      console.log('⏭️ Abriendo modal nueva acción');
       abrirModalAccion();
     } else {
       // Opción 1: Solo concluir
+      console.log('🔄 Recargando acciones');
       cargarAcciones();
     }
   } else {
-    alert('❌ Error al concluir la acción');
+    console.error('❌ Error en updateAccion:', res.error);
+    alert('❌ Error al concluir la acción: ' + (res.error || 'desconocido'));
   }
 }
 
@@ -646,7 +666,10 @@ function editarAccion(id) {
     document.getElementById('accion-cliente').value = accion.cliente || '';
     document.getElementById('accion-acompañamiento').value = accion.acompañamiento || '';
     document.getElementById('accion-proveedor').value = accion.proveedor_externo || '';
-    document.getElementById('accion-fecha').value = accion.fecha_compromiso || '';
+    // Convertir fecha ISO a formato yyyy-MM-dd para el input date
+    const fechaISO = accion.fecha_compromiso;
+    const fechaFormato = fechaISO ? fechaISO.split('T')[0] : '';
+    document.getElementById('accion-fecha').value = fechaFormato;
     document.getElementById('accion-descripcion').value = accion.descripcion || '';
     document.getElementById('modal-accion-title').textContent = '✏️ Editar Acción';
     document.getElementById('modal-accion').style.display = 'flex';
